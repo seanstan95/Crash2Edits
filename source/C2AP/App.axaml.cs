@@ -97,7 +97,7 @@ public partial class App : Application
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.2");
-        Context.ClientVersion = "v0.2.0"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
+        Context.ClientVersion = "v0.2.0";
         Context.ConnectClicked += Context_ConnectClicked;
         Context.CommandReceived += (e, a) =>
         {
@@ -110,7 +110,6 @@ public partial class App : Application
         _hasSubmittedGoal = false;
         _useQuietHints = true;
         //Log.Logger.Information("Hello World");
-        //Log.Logger.Information("C2AP v0.2.0");
         Log.Logger.Information("This Archipelago Client is compatible only with the Crash Bandicoot 2 Europe (PAL) Release");
         Log.Logger.Information("Trying to play with a different version will not work and may release all of your locations at the start.");
 
@@ -174,41 +173,41 @@ public partial class App : Application
                     Log.Logger.Information($"{location.Name}");
                 }
                 break;
-            case "debug_markbosses":
-                uint address;
-                int[] bossBits = [
-                    Addresses.levelNameToId["Dr. N. Gin"],
-                    Addresses.levelNameToId["Ripper Roo"],
-                    Addresses.levelNameToId["Komodo Brothers"],
-                    Addresses.levelNameToId["Tiny Tiger"],
+            //case "debug_markbosses":
+            //    uint address;
+            //    int[] bossBits = [
+            //        Addresses.levelNameToId["Dr. N. Gin"],
+            //        Addresses.levelNameToId["Ripper Roo"],
+            //        Addresses.levelNameToId["Komodo Brothers"],
+            //        Addresses.levelNameToId["Tiny Tiger"],
                     
-                ];
-                for (int i = 0; i < bossBits.Length; i++)
-                {
-                    address = Addresses.LevelExitsAddress + (uint)bossBits[i] / 8;
-                    int bit = bossBits[i] % 8;
-                    Memory.WriteBit(address, bit, true);
-                }
-                break;
-            case "debug_sendgoal":
-                Client.SendGoalCompletion();
-                break;
+            //    ];
+            //    for (int i = 0; i < bossBits.Length; i++)
+            //    {
+            //        address = Addresses.LevelExitsAddress + (uint)bossBits[i] / 8;
+            //        int bit = bossBits[i] % 8;
+            //        Memory.WriteBit(address, bit, true);
+            //    }
+            //    break;
+            //case "debug_sendgoal":
+            //    Client.SendGoalCompletion();
+            //    break;
 
         }
         string[] args = command.Split(' ');
         if (args.Length == 2)
         {
-            if (args[0] == "giveloc") //testing crystal locations
-            {
+            //if (args[0] == "giveloc") //testing crystal locations
+            //{
 
-                uint address = Addresses.CrystalLocationsAddress;
-                int bits = Convert.ToInt32(args[1]);
+            //    uint address = Addresses.CrystalLocationsAddress;
+            //    int bits = Convert.ToInt32(args[1]);
 
-                address += (uint)(bits / 8);
-                bits = bits % 8;
-                Memory.WriteBit(address, bits, true);
-                Log.Logger.Information($"Checking location at crystal address 0x{address:X}, bit#{bits}");
-            }
+            //    address += (uint)(bits / 8);
+            //    bits = bits % 8;
+            //    Memory.WriteBit(address, bits, true);
+            //    Log.Logger.Information($"Checking location at crystal address 0x{address:X}, bit#{bits}");
+            //}
             if (args[0] == "snapshot")
             {
                 string filename = $"memorysnapshot_{args[1]}.mem";
@@ -224,54 +223,54 @@ public partial class App : Application
                 }
             }
         }
-        if (args.Length >= 2) { 
-            if (args[0] == "b")
-            {
-                if (args[1] == "clear")
-                {
-                    FruitCheck.DebugScanFruitList();
-                    return;
-                }
-                Log.Logger.Information("bundling");
-                string filepath = "bundles.txt";
-                int bundleId = -1;
-                using (StreamReader reader = new StreamReader(filepath))
-                {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        if (line[0] == '#') continue;
-                        bundleId = Convert.ToInt32(line.Split('-')[0], 16);
-                    }
-                }
-                bundleId++;
-                List<uint> fruitList = FruitCheck.DebugScanFruitList();
-                string name = "#";
-                for (int i = 1; i < args.Length; i++)
-                {
-                    name += $"{args[i]}";
-                    if (i < args.Length - 1)
-                    {
-                        name += " ";
-                    }
-                }
-                List<string> content = [name];
-                foreach (uint fruit in fruitList)
-                {
-                    content.Add($"{bundleId:X}-{fruit:X}");
-                }
-                try
-                {
-                    File.AppendAllLines(filepath, content);
-                    Log.Logger.Information("Content appended successfully.");
-                }
-                catch (Exception ex)
-                {
-                    Log.Logger.Information($"An error occurred: {ex.Message}");
-                }
-                Log.Logger.Information("bundled");
-            }
-        }
+        //if (args.Length >= 2) { 
+        //    if (args[0] == "b")
+        //    {
+        //        if (args[1] == "clear")
+        //        {
+        //            FruitCheck.DebugScanFruitList();
+        //            return;
+        //        }
+        //        Log.Logger.Information("bundling");
+        //        string filepath = "bundles.txt";
+        //        int bundleId = -1;
+        //        using (StreamReader reader = new StreamReader(filepath))
+        //        {
+        //            string line;
+        //            while ((line = reader.ReadLine()) != null)
+        //            {
+        //                if (line[0] == '#') continue;
+        //                bundleId = Convert.ToInt32(line.Split('-')[0], 16);
+        //            }
+        //        }
+        //        bundleId++;
+        //        List<uint> fruitList = FruitCheck.DebugScanFruitList();
+        //        string name = "#";
+        //        for (int i = 1; i < args.Length; i++)
+        //        {
+        //            name += $"{args[i]}";
+        //            if (i < args.Length - 1)
+        //            {
+        //                name += " ";
+        //            }
+        //        }
+        //        List<string> content = [name];
+        //        foreach (uint fruit in fruitList)
+        //        {
+        //            content.Add($"{bundleId:X}-{fruit:X}");
+        //        }
+        //        try
+        //        {
+        //            File.AppendAllLines(filepath, content);
+        //            Log.Logger.Information("Content appended successfully.");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Log.Logger.Information($"An error occurred: {ex.Message}");
+        //        }
+        //        Log.Logger.Information("bundled");
+        //    }
+        //}
     }
     private async void Context_ConnectClicked(object? sender, ConnectClickedEventArgs e)
     {
@@ -542,119 +541,6 @@ public partial class App : Application
             crashState.ClearGems = clearGemCount;
         }
     }
-    //public static async Task SyncGameStateOld()
-    //{
-    //    if (Client.LocationState == null) return;
-    //    if (Client.ItemState == null) return;
-
-    //    Log.Debug($"syncing");
-
-    //    await Client.SaveGameStateAsync();
-    //    // Convert ILocation list to Location list if needed
-    //    List<Location> locations = Client.LocationState.CompletedLocations.OfType<Location>().ToList();
-    //    //List<Location> locations = Client.GameState.CompletedLocations.OfType<Location>().ToList();
-    //    foreach (Location location in locations)
-    //    {
-    //        if (location.Address == 0 || location.AddressBit == 0) continue;
-    //        Log.Debug($"address: {location.Address:X}, bit: {location.AddressBit}");
-    //        Memory.WriteBit(location.Address, location.AddressBit, true);
-
-    //        if (location.Address != Addresses.GemLocationsAddress + Addresses.ColoredGemOffset || ((0x1 << location.AddressBit) & Addresses.ColoredGemMask) == 0)
-    //        {
-    //            uint offset = (uint) location.Address - Addresses.GemLocationsAddress;
-    //            Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + offset, location.AddressBit, true);
-    //        }
-    //    }
-    //    //List<Item> items = Client.GameState.ReceivedItems;
-    //    List<Item> items = Client.ItemState.ReceivedItems.ToList();
-    //    uint crystalCount = 0;
-    //    uint clearGemCount = 0;
-    //    List<int> coloredGems = new();
-    //    foreach (Item item in items)
-    //    {
-    //        switch (item.Name)
-    //        {
-    //            case "Crystal":
-    //                crystalCount++;
-    //                break;
-    //            case "Clear Gem":
-    //                clearGemCount++;
-    //                break;
-    //            case "Red Gem":
-    //                coloredGems.Add(Addresses.RedGemReceivedBit);
-    //                break;
-    //            case "Green Gem":
-    //                coloredGems.Add(Addresses.GreenGemReceivedBit);
-    //                break;
-    //            case "Purple Gem":
-    //                coloredGems.Add(Addresses.PurpleGemReceivedBit);
-    //                break;
-    //            case "Blue Gem":
-    //                coloredGems.Add(Addresses.BlueGemReceivedBit);
-    //                break;
-    //            case "Yellow Gem":
-    //                coloredGems.Add(Addresses.YellowGemReceivedBit);
-    //                break;
-    //        }
-    //    }
-    //    //update center lift with current crystalCount
-    //    if (CrashObjectMod.liftMod == null)
-    //    {
-    //        Log.Debug("Lift mod is not initialized!");
-    //    }
-    //    else
-    //    {
-    //        List<byte[]> mods = new();
-    //        mods.Add(CustomHook.ConvertAsm([$"addiu $a0, $zero, 0x{crystalCount:X}"]).ToArray());
-    //        mods.Add(CustomHook.ConvertAsm([$"addiu $v1, $zero, 0x{crystalCount:X}"]).ToArray());
-
-    //        List<uint> modInstructionLines = [6507 - CrashObjectMod.magicOffset / 4, 6507];
-    //        CrashObjectMod.liftMod.EditMod(mods, modInstructionLines);
-    //    }
-        
-
-    //    //set crystal item flags
-    //    byte[] bytes = new byte[8];
-    //    for (int i = 0; i < bytes.Length; i++)
-    //    {
-    //        for (int j = 1; j < 0xFF; j = j << 1)
-    //        {
-    //            if (crystalCount == 0) break;
-    //            crystalCount--;
-    //            bytes[i] |= (byte) j;
-    //        }
-    //        if (crystalCount == 0) break;
-    //    }
-    //    Memory.WriteByteArray(Addresses.CrystalsReceivedAddress, bytes);
-
-    //    //set clear gem item flags
-    //    bytes = new byte[8];
-    //    for (int i = 0; i < bytes.Length; i++)
-    //    {
-    //        int bit = 1;
-    //        for (int j = 0; j < 8; j++)
-    //        {
-    //            if (clearGemCount == 0) break;
-    //            clearGemCount--;
-    //            if (i == Addresses.ColoredGemOffset && j == Addresses.RedGemReceivedBit)
-    //            {
-    //                j = Addresses.YellowGemReceivedBit + 0x1;
-    //            }
-    //            bytes[i] |= (byte)bit;
-    //            bit = bit << 1;
-    //        }
-    //        if (clearGemCount == 0) break;
-    //    }
-    //    Memory.WriteByteArray(Addresses.GemsReceivedAddress, bytes);
-
-    //    //set colored gem flags
-    //    foreach (int coloredGemBit in coloredGems)
-    //    {
-    //        Memory.WriteBit(Addresses.ColoredGemReceivedAddress, coloredGemBit, true);
-    //        Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, coloredGemBit, true);
-    //    }
-    //    Log.Debug($"done syncing");
-    //}
     private async void ItemReceived(object? o, ItemReceivedEventArgs args)
     {
         Log.Logger.Debug($"Item Received: {JsonConvert.SerializeObject(args.Item)}");
