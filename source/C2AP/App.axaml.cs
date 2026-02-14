@@ -97,7 +97,7 @@ public partial class App : Application
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.2");
-        Context.ClientVersion = "v0.2.0 - pre"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
+        Context.ClientVersion = "v0.2.0"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
         Context.ConnectClicked += Context_ConnectClicked;
         Context.CommandReceived += (e, a) =>
         {
@@ -110,7 +110,7 @@ public partial class App : Application
         _hasSubmittedGoal = false;
         _useQuietHints = true;
         //Log.Logger.Information("Hello World");
-        //Log.Logger.Information("C2AP v0.2.0 - pre");
+        //Log.Logger.Information("C2AP v0.2.0");
         Log.Logger.Information("This Archipelago Client is compatible only with the Crash Bandicoot 2 Europe (PAL) Release");
         Log.Logger.Information("Trying to play with a different version will not work and may release all of your locations at the start.");
 
@@ -189,6 +189,9 @@ public partial class App : Application
                     int bit = bossBits[i] % 8;
                     Memory.WriteBit(address, bit, true);
                 }
+                break;
+            case "debug_sendgoal":
+                Client.SendGoalCompletion();
                 break;
 
         }
@@ -367,6 +370,7 @@ public partial class App : Application
         //if (Client.GameState == null) return;
         //UpdateGemLocationsChecked();
         //SyncGameState();
+        Log.Logger.Information($"location: {e.CompletedLocation.Name}");
         UpdateCrashState();
         CheckGoalCondition();
     }
@@ -716,7 +720,6 @@ public partial class App : Application
     {
         if (Client.LocationState == null) return;
         if (Client.ItemState == null) return;
-
         if (_hasSubmittedGoal)
         {
             return;
@@ -724,7 +727,15 @@ public partial class App : Application
         byte levelid = Memory.ReadByte(Addresses.LevelIdAddress + 0x1);
         if (levelid == 0x29 || levelid == 0x28)
         {
-            Client.SendGoalCompletion();
+            Timer sendGoal = new Timer();
+            sendGoal.Interval = 10;
+            sendGoal.AutoReset = false;
+            sendGoal.Elapsed += (s, ev) =>
+            {
+                Client.SendGoalCompletion();
+            };
+            sendGoal.Enabled = true;
+            //Client.SendGoalCompletion();
             _hasSubmittedGoal = true;
         }
     }
