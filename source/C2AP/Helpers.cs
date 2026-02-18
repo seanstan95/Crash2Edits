@@ -1,10 +1,7 @@
 ﻿using Archipelago.Core.Models;
 using Archipelago.Core.Util;
-using Serilog;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using static C2AP.Models.Enums;
 using Location = Archipelago.Core.Models.Location;

@@ -44,6 +44,7 @@ public partial class App : Application
     public static MainWindowViewModel Context;
     public static ArchipelagoClient Client { get; set; }
     public static List<ILocation> GameLocations { get; set; }
+    public static Dictionary<string, object> SlotData { get; private set; } = new();
     private static readonly object _lockObject = new object();
     private static Dictionary<string, string> _hintsList { get; set; }
     private static bool _hasSubmittedGoal { get; set; }
@@ -302,7 +303,7 @@ public partial class App : Application
             return;
         }
         Client = new ArchipelagoClient(client);
-        Client.ShouldSaveStateOnItemReceived = false;
+        //Client.ShouldSaveStateOnItemReceived = false;
 
         Memory.GlobalOffset = Memory.GetDuckstationOffset();
 
@@ -315,7 +316,7 @@ public partial class App : Application
         Client.Connected += OnConnected;
         Client.Disconnected += OnDisconnected;
 
-        await Client.Connect(e.Host, "Crash2", "");
+        await Client.Connect(e.Host, "Crash2");
         if (!Client.IsConnected)
         {
             Log.Logger.Error("Your host seems to be invalid.  Please confirm that you have entered it correctly.");
@@ -340,6 +341,7 @@ public partial class App : Application
         Client.MonitorLocations(GameLocations);
         FruitCheck.Initialize();
         CrashObjectMod.Initialize();
+        WarpRoomRandomizer.Initialize();
         //Archipelago.MultiClient.Net.
     }
 
@@ -713,8 +715,13 @@ public partial class App : Application
     
     private static void OnConnected(object sender, EventArgs args)
     {
+        int currentSlot = Client.CurrentSession.ConnectionInfo.Slot;
         Log.Logger.Information("Connected to Archipelago");
-        Log.Logger.Information($"Playing {Client.CurrentSession.ConnectionInfo.Game} as {Client.CurrentSession.Players.GetPlayerName(Client.CurrentSession.ConnectionInfo.Slot)}");
+        Log.Logger.Information($"Playing {Client.CurrentSession.ConnectionInfo.Game} as {Client.CurrentSession.Players.GetPlayerName(currentSlot)}");
+
+        var slotDataTask = App.Client.CurrentSession.DataStorage.GetSlotDataAsync(currentSlot);
+        slotDataTask.Wait();
+        SlotData = slotDataTask.Result;
 
         // There is a tradeoff here when creating new threads.  Separate timers allow for better control over when
         // memory reads and writes will happen, but they take away threads for other client tasks.
@@ -726,7 +733,7 @@ public partial class App : Application
         //_loadGameTimer.Interval = 5000;
         //_loadGameTimer.Enabled = true;
 
-        
+
         // Repopulate hint list.  There is likely a better way to do this using the Get network protocol
         // with keys=[$"hints_{team}_{slot}"].
         Client?.SendMessage("!hint");

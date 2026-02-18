@@ -16,7 +16,7 @@ namespace C2AP
 
         public const uint GemLocationsWithReceivedColoredGemsAddress = 0x0000EA20; //64 bits
         public const uint ColoredGemOffset = 0x7;
-        public const byte ColoredGemMask =        0b01111100;
+        public const byte ColoredGemMask = 0b01111100;
         public const byte ColoredGemMaskNegated = 0b10000011;
 
         public const uint CrystalLocationsAddress = 0x0006D03C; //64 bits
@@ -33,6 +33,7 @@ namespace C2AP
 
         public const uint LivesGlobalAddress = 0x6ce69; //8 bits
         public const uint WumpaGlobalAddress = 0x6ce71; //8 bits
+        // TODO check for serial code (i.e. memcard filename) in order to detect region?
         public const uint StaticTextAddress = 0x5ce1c;
         public const string StaticText = "Library Programs (c) 1993-1997 Sony Computer Entertainment Inc., All Rights Reserved";
 
@@ -44,6 +45,13 @@ namespace C2AP
         //crash object
         public const uint LivesOffset = 0x145;
         public const uint WumpaOffset = 0x141;
+
+        // CHeOC (cortex head obs) gool file static data item offset
+        public static readonly uint[] MontyHallWarpRoomInfoStaticDataOffset = {
+            0x3AC, 0x418, 0x440, 0x468, 0x490, 0x4B8
+        };
+        // hardcoded monty hall spawn index remap table
+        public const uint MontyHallSpawnIndexList = 0x005BBAC;
 
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {

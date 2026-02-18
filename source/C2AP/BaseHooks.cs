@@ -116,6 +116,9 @@ namespace C2AP
             //0x19, 0x11, 0x0A, 0x0F, 0x10
 
             ApItemsHook.InsertHook(0x3A8C0, 0xf030);
+
+            WarpRoomRandomizer.SetupAndPatchMontyHall();
+
             //App.SyncGameState();
 
             ////exit

@@ -23,7 +23,10 @@ namespace C2AP
         private List<byte[]> _mods;
         private List<uint> _modInstructionLines;
         private uint _levelId;
+        private Action<uint, uint>? _customHandler; // custom function that runs
+
         public static CrashObjectMod? liftMod;
+        public static CrashObjectMod? montyHallMod;
         private static Timer modRefreshTimer = new Timer();
         private static List<CrashObjectMod> modList = new();
         public static uint magicOffset = 0x180;
@@ -60,6 +63,18 @@ namespace C2AP
 
 
             liftMod = new CrashObjectMod(36, 8, mods, modInstructionLines);
+            montyHallMod = new CrashObjectMod(36, 3, new(), new(), (_object, _gool) =>
+            {
+                uint _staticData = CrashObject.GetItemAddressFromEntry(_gool, 2);
+                for (int w = 0; w < Addresses.MontyHallWarpRoomInfoStaticDataOffset.Length; ++w)
+                {
+                    uint offset = Addresses.MontyHallWarpRoomInfoStaticDataOffset[w];
+                    for (uint i = 0; i < 5; ++i)
+                    {
+                        Memory.WriteByteArray(_staticData + offset + i * 8, BitConverter.GetBytes(WarpRoomRandomizer.MontyHallDestinations[w * 5 + i] << 8));
+                    }
+                }
+            });
 
             modRefreshTimer.Interval = 1000; // ms - adjust to desired tick rate
             modRefreshTimer.AutoReset = true;
@@ -71,17 +86,17 @@ namespace C2AP
                 }
             };
             modRefreshTimer.Enabled = true;
-            Log.Debug($"Lift mod has been initialized");
+            Log.Debug($"Object mods have been initialized");
         }
-        public CrashObjectMod(uint type, uint subtype, List<byte[]> mods, List<uint> modInstructionLines)
+        public CrashObjectMod(uint type, uint subtype, List<byte[]> mods, List<uint> modInstructionLines, Action<uint, uint>? customHandler = null)
         {
-            
             _type = type;
             _subtype = subtype;
             _address = 0;
             _goolEntryAddress = 0;
             _mods = mods;
             _modInstructionLines = modInstructionLines;
+            _customHandler = customHandler;
             _levelId = 0x02;
             if (mods.Count != modInstructionLines.Count)
             {
@@ -91,7 +106,6 @@ namespace C2AP
             {
                 modList.Add(this);
             }
-            
         }
         
         public void EditMod(List<byte[]> newMods, List<uint> newModInstructionLines)
@@ -125,6 +139,8 @@ namespace C2AP
             _goolEntryAddress = Memory.ReadUInt(_address + CrashObject.goolOffset) - CrashObject.cacheOffset;
             if (_goolEntryAddress == 0 || _goolEntryAddress == CrashObject.cacheOffset) return;
 
+            _customHandler?.Invoke(_address, _goolEntryAddress);
+
             uint byteCodeAddress = CrashObject.GetItemAddressFromEntry(_goolEntryAddress, 1);
             uint instructionAddress;
             for (int i = 0; i < _mods.Count; i++)
@@ -147,7 +163,8 @@ namespace C2AP
             for (int i = 0; i < _mods.Count; i++)
             {
                 instructionAddress = byteCodeAddress + (_modInstructionLines[i] * 0x4);
-                if (Memory.ReadUInt(instructionAddress) != Convert.ToUInt32(_mods[i].ToArray()))
+                byte[] checked_mod = Memory.ReadByteArray(instructionAddress, _mods[i].Length);
+                if (!_mods[i].AsSpan().SequenceEqual(checked_mod))
                 {
                     Log.Debug("instruction integrity failed");
                     return false;

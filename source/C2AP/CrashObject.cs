@@ -1,12 +1,6 @@
 ﻿using Archipelago.Core.Util;
 using Serilog;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace C2AP
 {
@@ -28,7 +22,8 @@ namespace C2AP
         {
             uint currentListHeader = listAddress;
             uint objAddress = 0;
-            while (true)
+            // there are eight active process trees. after that is the dead process tree, which we do not care about.
+            for (int i = 0; i < 8; ++i)
             {
                 Log.Debug($"Checking list header at 0x{currentListHeader:X}");
                 //Log.Information($"Header value is {Memory.ReadUInt(currentListHeader)}");
@@ -36,7 +31,7 @@ namespace C2AP
                 //Log.Information($"Header -0x4 value is {Memory.ReadUInt(currentListHeader - 0x4)}");
                 if (Memory.ReadUInt(currentListHeader) != 2)
                 {
-                    break; //not a valid list
+                    continue; //not a valid list
                 }
                 objAddress = Memory.ReadUInt(currentListHeader + 0x4) - cacheOffset; //first object in list
 
@@ -213,6 +208,23 @@ namespace C2AP
             }
             uint bytecodeAddress = GetItemAddressFromEntry(goolEntryAddress, 1); //second item is bytecode
             //Log.Debug($"Gool bytecode address is 0x{bytecodeAddress:X}");
+            return bytecodeAddress;
+        }
+
+        public static uint GetGoolStaticDataAddressFromObject(uint objAddress)
+        {
+            if (objAddress == cacheOffset || objAddress == 0)
+            {
+                Log.Warning($"Null object pointer");
+                return 0;
+            }
+            uint goolEntryAddress = Memory.ReadUInt(objAddress + goolOffset) - cacheOffset;
+            if (goolEntryAddress == 0 || goolEntryAddress == cacheOffset)
+            {
+                Log.Warning($"Null goolEntry pointer");
+                return 0;
+            }
+            uint bytecodeAddress = GetItemAddressFromEntry(goolEntryAddress, 2); //third item is static data
             return bytecodeAddress;
         }
     }
