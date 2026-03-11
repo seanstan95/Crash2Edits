@@ -24,6 +24,9 @@ namespace C2AP
         public ulong _freeAddress;
 
         public ulong _hookSize;
+
+        private bool _isJumptablePatch;
+
         public CustomHook(List<string> asm) { 
             _asm = asm;
             _bytes = ConvertAsm(asm);
@@ -323,8 +326,8 @@ namespace C2AP
                         opcode = 0x0D; //ori
 
 
-                        rs = (uint)0x8 + Convert.ToByte(instruction[2].Replace("$t", ""));
-                        rt = (uint)0x8 + Convert.ToByte(instruction[1].Replace("$t", ""));
+                        rs = EncodeRegister(instruction[2]);
+                        rt = EncodeRegister(instruction[1]);
 
                         immed = Convert.ToUInt32(instruction[3].Replace("0x", ""), 16) & 0xFFFF;
 
@@ -373,6 +376,7 @@ namespace C2AP
 
             return bytes;
         }
+
         public void LogHookBytes()
         {
             if (_bytes.Count%4 != 0)
@@ -385,6 +389,7 @@ namespace C2AP
                 Log.Information($"line {i}: {Convert.ToHexString([_bytes[i], _bytes[i+1], _bytes[i+2], _bytes[i+3]])}");
             }
         }
+
         private static byte[] ConvertToBytes(uint opcode, uint rs, uint rt, uint immed)
         {
             uint encoding = 0;
@@ -396,6 +401,7 @@ namespace C2AP
             //bytes.Reverse();
             return bytes;
         }
+
         private static byte[] ConvertToBytes(uint rs, uint rt, uint rd, uint shamt, uint funct)
         {
             uint encoding = 0;
@@ -408,6 +414,7 @@ namespace C2AP
             //bytes.Reverse();
             return bytes;
         }
+
         public void InsertHook(ulong targetAddress,ulong freeAddress)
         {
             int targetInstructionSize = 8;
@@ -416,6 +423,7 @@ namespace C2AP
                 Log.Warning("can't run InsertHook on already inserted hook");
                 return;
             }
+            _isJumptablePatch = false;
             _targetAddress = targetAddress;
             _targetInstructionSize = targetInstructionSize;
             _freeAddress = freeAddress;
@@ -454,7 +462,41 @@ namespace C2AP
             Memory.WriteByteArray(_freeAddress + (ulong)_targetInstructionSize + (ulong) _bytes.Count, jmpBack.ToArray());
 
             Log.Debug("Hook is in");
-            
+        }
+
+        public void InsertHookInJumptable(ulong jumptableEntryAddress, ulong jumptableExitAddress, ulong freeAddress)
+        {
+            int targetInstructionSize = 4;
+            if (_targetAddress != 0 && _freeAddress != 0)
+            {
+                Log.Warning("can't run InsertHook on already inserted hook");
+                return;
+            }
+            _isJumptablePatch = true;
+            _targetAddress = jumptableEntryAddress;
+            _targetInstructionSize = targetInstructionSize;
+            _freeAddress = freeAddress;
+
+            List<byte> jmpBack = ConvertAsm([$"jmp 0x{jumptableExitAddress:X}", "nop"]); //($"JMP 0x{(_targetAddress + (ulong)_targetInstructionSize):X}");
+            _hookSize = (ulong)(_targetInstructionSize + _bytes.Count + jmpBack.Count);
+
+            byte[] freeBytes = Memory.ReadByteArray(_freeAddress, (int)_hookSize);
+
+            if (freeBytes.Any(b => b != 0x00))
+            {
+                Log.Warning($"CustomHook: Free space at 0x{_freeAddress:X} is not empty!");
+                //return;
+            }
+
+            byte[] first = Memory.ReadByteArray(_targetAddress, _targetInstructionSize);
+            Memory.WriteByteArray(_freeAddress, first);
+            Log.Debug($"first: {Convert.ToHexString([first[0], first[1], first[2], first[3]])}");
+
+            Memory.WriteByteArray(_freeAddress + (ulong)_targetInstructionSize, _bytes.ToArray());
+            Memory.WriteByteArray(_freeAddress + (ulong)_targetInstructionSize + (ulong)_bytes.Count, jmpBack.ToArray());
+            Memory.WriteByteArray(_targetAddress, BitConverter.GetBytes((uint)(0x80000000 | freeAddress)));
+
+            Log.Debug("Hook is in");
         }
 
         public void RemoveHook()

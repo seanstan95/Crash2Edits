@@ -53,6 +53,21 @@ namespace C2AP
         // hardcoded monty hall spawn index remap table
         public const uint MontyHallSpawnIndexList = 0x005BBAC;
 
+        public const uint JumptableWarpLevelOverrideLevelD = 0x001037C;//0x001037C;
+        public const uint JumptableWarpLevelOverrideBreak = 0x001FE08;//0x8001FBC0;
+        public const uint WarpLevelOverrideTotallyBear = 0x001FD30;//0x8001FAE8;
+        public const uint WarpLevelOverrideRooWin = 0x001FD48;//0x8001FB00;
+        public const uint WarpLevelOverrideRooNotWin = 0x001FD5C;//0x8001FB14;
+        public const uint WarpLevelOverrideKimodoWinAgain = 0x001FD7C;//0x8001FB34;
+        public const uint WarpLevelOverrideKimodoWin = 0x001FD90;//0x8001FB48;
+        public const uint WarpLevelOverrideKimodoNotWinAndRooWinQuit = 0x001FD98;//0x8001FB50;
+        public const uint WarpLevelOverrideTazWin = 0x001FDB0;//0x8001FB68;
+        public const uint WarpLevelOverrideTazNotWin = 0x001FDC4;//0x8001FB7C;
+        public const uint WarpLevelOverrideNGinWinAgain = 0x001FDE4;//0x8001FB9C;
+        public const uint WarpLevelOverrideNGinWin = 0x001FDF8;//0x8001FBB0;
+        public const uint WarpLevelOverrideTazWinQuitAndNGinNotWin = 0x001FE00;//0x8001FBB8;
+        public const uint WarpLevelOverrideCortex = 0x001FE04;//0x8001FBBC;
+
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {
             //crystals

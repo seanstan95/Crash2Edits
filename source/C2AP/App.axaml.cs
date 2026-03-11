@@ -387,7 +387,6 @@ public partial class App : Application
         Client.MonitorLocations(GameLocations);
         FruitCheck.Initialize();
         CrashObjectMod.Initialize();
-        WarpRoomRandomizer.Initialize();
         //Archipelago.MultiClient.Net.
     }
 

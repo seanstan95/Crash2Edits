@@ -25,7 +25,7 @@ namespace C2AP
             // there are eight active process trees. after that is the dead process tree, which we do not care about.
             for (int i = 0; i < 8; ++i)
             {
-                Log.Debug($"Checking list header at 0x{currentListHeader:X}");
+                //Log.Debug($"Checking list header at 0x{currentListHeader:X}");
                 //Log.Information($"Header value is {Memory.ReadUInt(currentListHeader)}");
                 //Log.Information($"Header +0x4 value is {Memory.ReadUInt(currentListHeader + 0x4)}");
                 //Log.Information($"Header -0x4 value is {Memory.ReadUInt(currentListHeader - 0x4)}");

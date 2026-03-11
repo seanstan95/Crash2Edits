@@ -22,11 +22,12 @@ namespace C2AP
         private uint _goolEntryAddress;
         private List<byte[]> _mods;
         private List<uint> _modInstructionLines;
-        private uint _levelId;
+        private int _levelId;
         private Action<uint, uint>? _customHandler; // custom function that runs
 
         public static CrashObjectMod? liftMod;
         public static CrashObjectMod? montyHallMod;
+        public static CrashObjectMod? warpSecretMod;
         private static Timer modRefreshTimer = new Timer();
         private static List<CrashObjectMod> modList = new();
         public static uint magicOffset = 0x180;
@@ -63,28 +64,31 @@ namespace C2AP
 
 
             liftMod = new CrashObjectMod(36, 8, mods, modInstructionLines);
-            App.Client.Options.TryGetValue("randomize_warp_destinations", out var option_randomize_warp_room);
-            if (option_randomize_warp_room == null)
-                return;
-            int randomize_warp_room = Convert.ToInt32(option_randomize_warp_room.ToString());
-
-            if (randomize_warp_room != 0)
+            montyHallMod = new CrashObjectMod(36, 3, new(), new(), (_object, _gool) =>
             {
-                montyHallMod = new CrashObjectMod(36, 3, new(), new(), (_object, _gool) =>
+                uint _staticData = CrashObject.GetItemAddressFromEntry(_gool, 2);
+                for (int w = 0; w < Addresses.MontyHallWarpRoomInfoStaticDataOffset.Length; ++w)
                 {
-                    uint _staticData = CrashObject.GetItemAddressFromEntry(_gool, 2);
-                    for (int w = 0; w < Addresses.MontyHallWarpRoomInfoStaticDataOffset.Length; ++w)
+                    uint offset = Addresses.MontyHallWarpRoomInfoStaticDataOffset[w];
+                    for (uint i = 0; i < 5; ++i)
                     {
-                        uint offset = Addresses.MontyHallWarpRoomInfoStaticDataOffset[w];
-                        for (uint i = 0; i < 5; ++i)
-                        {
-                            Memory.WriteByteArray(_staticData + offset + i * 8, BitConverter.GetBytes(WarpRoomRandomizer.MontyHallDestinations[w * 5 + i] << 8));
-                        }
+                        Memory.WriteByteArray(_staticData + offset + i * 8, BitConverter.GetBytes(WarpRoomRandomizer.MontyHallDestinations[w * 5 + i] << 8));
                     }
-                });
-            }
+                }
+            });
+            warpSecretMod = new CrashObjectMod(1, 9, new(), new(), (_object, _gool) =>
+            {
+                // patch gool instructions directly
+                uint _instructions = CrashObject.GetItemAddressFromEntry(_gool, 1);
+                Memory.WriteByteArray(_instructions + 4 * 339, BitConverter.GetBytes((0x11 << 24) | ((0x800 | WarpRoomRandomizer.MontyHallSpawnList[26]) << 12) | (0xE26))); // 0x2D
+                Memory.WriteByteArray(_instructions + 4 * 323, BitConverter.GetBytes((0x11 << 24) | ((0x800 | WarpRoomRandomizer.MontyHallSpawnList[27]) << 12) | (0xE26))); // 0x2B
+                Memory.WriteByteArray(_instructions + 4 * 327, BitConverter.GetBytes((0x11 << 24) | ((0x800 | WarpRoomRandomizer.MontyHallSpawnList[28]) << 12) | (0xE26))); // 0x2C
+                Memory.WriteByteArray(_instructions + 4 * 335, BitConverter.GetBytes((0x11 << 24) | ((0x800 | WarpRoomRandomizer.MontyHallSpawnList[29]) << 12) | (0xE26))); // 0x2F
+                Memory.WriteByteArray(_instructions + 4 * 331, BitConverter.GetBytes((0x11 << 24) | ((0x800 | WarpRoomRandomizer.MontyHallSpawnList[30]) << 12) | (0xE26))); // 0x2E
+            });
+            warpSecretMod._levelId = -1;
 
-            modRefreshTimer.Interval = 1000; // ms - adjust to desired tick rate
+            modRefreshTimer.Interval = 500; // ms - adjust to desired tick rate
             modRefreshTimer.AutoReset = true;
             modRefreshTimer.Elapsed += (s, ev) =>
             {
@@ -131,7 +135,7 @@ namespace C2AP
         }
         public void RefreshMod() //this method is be called on a timer
         {
-            if (Memory.ReadByte(Addresses.LevelIdAddress+0x1) != _levelId)
+            if (_levelId != -1 && Memory.ReadByte(Addresses.LevelIdAddress+0x1) != _levelId)
             {
                 return;
             }
@@ -139,7 +143,7 @@ namespace C2AP
             {
                 return;
             }
-            Log.Information("Refreshing mod");
+
             //here we need to re-instate our modification
             _address = CrashObject.FindObjectAddress(_type, _subtype);
             if (_address == 0 || _address == CrashObject.cacheOffset) return;

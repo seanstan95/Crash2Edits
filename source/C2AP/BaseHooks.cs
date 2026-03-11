@@ -117,7 +117,7 @@ namespace C2AP
 
             ApItemsHook.InsertHook(0x3A8C0, 0xf030);
 
-            //WarpRoomRandomizer.SetupAndPatchMontyHall();
+            WarpRoomRandomizer.Initialize();
 
             //App.SyncGameState();
 
@@ -282,10 +282,12 @@ namespace C2AP
 
             //PauseMenuItems.InsertHook(0x4A8E0, 0xf030);
         }
+
         public static void UnInitialize()
         {
-            if ( ApItemsHook != null )
+            if (ApItemsHook != null)
                 ApItemsHook.RemoveHook();
+            WarpRoomRandomizer.UnInitialize();
         }
     }
 }
