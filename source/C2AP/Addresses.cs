@@ -68,6 +68,8 @@ namespace C2AP
         public const uint WarpLevelOverrideTazWinQuitAndNGinNotWin = 0x001FE00;//0x8001FBB8;
         public const uint WarpLevelOverrideCortex = 0x001FE04;//0x8001FBBC;
 
+        public const uint PbakId = 0x005f620; //0x8005f388;
+
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {
             //crystals

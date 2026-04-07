@@ -325,7 +325,7 @@ public partial class App : Application
         Client.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
         Client.MessageReceived += Client_MessageReceived;
         Client.ItemReceived += ItemReceived;
-        Client.EnableLocationsCondition = () => Helpers.IsInGame();
+        Client.EnableLocationsCondition = () => Helpers.IsInGame() && Memory.ReadUInt(Addresses.PbakId) == 0x6396347f;
         await Client.Login(e.Slot, !string.IsNullOrWhiteSpace(e.Password) ? e.Password : null);
         //if (Client.Options?.Count > 0)
         //{
