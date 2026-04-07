@@ -72,6 +72,7 @@ namespace C2AP
         public const uint WarpLevelOverrideCortex = 0x001FE04;//0x8001FBBC;
 
         public const uint PbakId = 0x005f620; //0x8005f388;
+        public const uint DemoPointer = 0x0005f670;
 
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {

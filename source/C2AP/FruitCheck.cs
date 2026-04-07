@@ -195,6 +195,7 @@ namespace C2AP
 
         private static void CheckId(uint id)
         {
+            if (Helpers.IsInDemo()) return;
             if (!FruitIdToBundle.TryGetValue(id, out int value))
             {
                 Log.Logger.Warning($"Unknown fruit id: {id:X}");

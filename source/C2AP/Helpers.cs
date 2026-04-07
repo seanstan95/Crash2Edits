@@ -45,6 +45,10 @@ namespace C2AP
             return false;
         }
         
+        public static bool IsInDemo()
+        {
+            return Memory.ReadUInt(Addresses.DemoPointer) != 0;
+        }
         public static List<ILocation> BuildLocationList()
         {
             //int id = 10000;

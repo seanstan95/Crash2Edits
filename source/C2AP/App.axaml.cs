@@ -151,15 +151,16 @@ public partial class App : Application
                 break;
             case "exec":
                 
-                uint crashAddress = CrashObject.FindObjectAddress(0, 0);
-                if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
-                {
-                    Log.Logger.Information($"trans x: {Memory.ReadFloat(crashAddress + 0x60)}");
-                    Log.Logger.Information($"trans y: {Memory.ReadFloat(crashAddress + 0x64)}");
-                    Log.Logger.Information($"trans z: {Memory.ReadFloat(crashAddress + 0x68)}");
+                //uint crashAddress = CrashObject.FindObjectAddress(0, 0);
+                //if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
+                //{
+                //    Log.Logger.Information($"trans x: {Memory.ReadFloat(crashAddress + 0x60)}");
+                //    Log.Logger.Information($"trans y: {Memory.ReadFloat(crashAddress + 0x64)}");
+                //    Log.Logger.Information($"trans z: {Memory.ReadFloat(crashAddress + 0x68)}");
 
 
-                }
+                //}
+                Log.Logger.Information($"{Memory.ReadUInt(Addresses.DemoPointer):X}");
                 break;
             case "itemstate":
                 if (Client.ItemState == null) break;
@@ -282,7 +283,7 @@ public partial class App : Application
         Client.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
         Client.MessageReceived += Client_MessageReceived;
         Client.ItemReceived += ItemReceived;
-        Client.EnableLocationsCondition = () => Helpers.IsInGame() && Memory.ReadUInt(Addresses.PbakId) == 0x6396347f;
+        Client.EnableLocationsCondition = () => Helpers.IsInGame();
         await Client.Login(e.Slot, !string.IsNullOrWhiteSpace(e.Password) ? e.Password : null);
         //if (Client.Options?.Count > 0)
         //{
