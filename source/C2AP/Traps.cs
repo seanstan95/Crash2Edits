@@ -126,10 +126,15 @@ namespace C2AP
                 Log.Logger.Debug($"option: null");
                 return;
             }
-            smallCrashSizeMult = Convert.ToInt32(smallCrashSize.ToString()) / 100.0;
-            bigCrashSizeMult = Convert.ToInt32(bigCrashSize.ToString()) / 100.0;
+            smallCrashSizeMult = Convert.ToInt32(smallCrashSize.ToString()) / 100.0; //default is 33%
+            bigCrashSizeMult = Convert.ToInt32(bigCrashSize.ToString()) / 100.0; //default is 150%
             trapDuration = Convert.ToInt32(trapDurationSeconds.ToString()) * 1000 / tickRate;
             //trapDuration = 100 * 1000 / tickRate;
+            crashAddress = CrashObject.FindObjectAddress(0, 0);
+            ApplyJetpackControls();
+            ResetJetpackControls();
+            ResetCrashSize();
+
             Log.Logger.Information("Initialized traps");
         }
 
@@ -174,7 +179,7 @@ namespace C2AP
             foreach (Trap trap in activeTraps.ToList())
             {
                 trap.duration--;
-                Log.Logger.Debug($"applying trap {trap.type} with duration {trap.duration}");
+                Log.Logger.Verbose($"applying trap {trap.type} with duration {trap.duration}");
                 if (trap.duration <= 0)
                 {
                     switch (trap.type)
@@ -200,6 +205,24 @@ namespace C2AP
                             ApplyCrashSize(bigCrashSizeMult);
                             break;
                         case TrapType.SmallCrash:
+                            byte levelid = Memory.ReadByte(Addresses.LevelIdAddress + 0x1);
+                            if (levelid == 0x17 || levelid == 0x1D || levelid == 0x22 || levelid == 0x25) { // if in a level where polar is used
+                                ApplyCrashSize(1);
+                                trap.duration++;
+                                break;
+                            }
+
+                            if (trap.duration + 1 == trapDuration)
+                            {
+                                if (GetCurrentCrashSize() > defaultCrashSize) // if crash is big
+                                {
+                                    Memory.Write(crashAddress + 0x64, Memory.ReadFloat(crashAddress + 0x64) + 4E-40f);
+                                }
+                                else if (GetCurrentCrashSize() == defaultCrashSize) // if crash is default size
+                                {
+                                    Memory.Write(crashAddress + 0x64, Memory.ReadFloat(crashAddress + 0x64) + 2E-40f);
+                                }
+                            }
                             ApplyCrashSize(smallCrashSizeMult);
                             break;
                         case TrapType.NoLives:
@@ -212,6 +235,15 @@ namespace C2AP
                 }
                 
             }
+        }
+
+        private static int GetCurrentCrashSize()
+        {
+            if (crashAddress == 0 || crashAddress == CrashObject.cacheOffset)
+            {
+                return defaultCrashSize;
+            }
+            return Memory.ReadInt(crashAddress + 0x78);
         }
         private static void ApplyCrashSize(double sizeMult)
         {
@@ -268,7 +300,6 @@ namespace C2AP
 
         private static void ResetJetpackControls()
         {
-            ApplyCrashSize(1);
             jetpackControlsHook.RemoveHook();
         }
     }

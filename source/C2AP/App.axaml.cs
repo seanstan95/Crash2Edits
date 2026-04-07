@@ -162,28 +162,32 @@ public partial class App : Application
                 uint crashAddress = CrashObject.FindObjectAddress(0, 0);
                 if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
                 {
+                    Log.Logger.Information($"trans x: {Memory.ReadFloat(crashAddress + 0x60)}");
+                    Log.Logger.Information($"trans y: {Memory.ReadFloat(crashAddress + 0x64)}");
+                    Log.Logger.Information($"trans z: {Memory.ReadFloat(crashAddress + 0x68)}");
+
 
                     //big crash
-                    Log.Logger.Information($"scale x: 0x{Memory.ReadInt(crashAddress + 0x78):X}");
-                    Log.Logger.Information($"scale y: 0x{Memory.ReadInt(crashAddress + 0x7C):X}");
-                    Log.Logger.Information($"scale z: 0x{Memory.ReadInt(crashAddress + 0x80):X}");
-                    Memory.Write(crashAddress + 0x78, (int) (Memory.ReadInt(crashAddress + 0x78) * 1.5));
-                    Memory.Write(crashAddress + 0x7C, (int) (Memory.ReadInt(crashAddress + 0x7C) * 1.5));
-                    Memory.Write(crashAddress + 0x80, (int) (Memory.ReadInt(crashAddress + 0x80) * 1.5));
+                    //Log.Logger.Information($"scale x: 0x{Memory.ReadInt(crashAddress + 0x78):X}");
+                    //Log.Logger.Information($"scale y: 0x{Memory.ReadInt(crashAddress + 0x7C):X}");
+                    //Log.Logger.Information($"scale z: 0x{Memory.ReadInt(crashAddress + 0x80):X}");
+                    //Memory.Write(crashAddress + 0x78, (int) (Memory.ReadInt(crashAddress + 0x78) * 1.5));
+                    //Memory.Write(crashAddress + 0x7C, (int) (Memory.ReadInt(crashAddress + 0x7C) * 1.5));
+                    //Memory.Write(crashAddress + 0x80, (int) (Memory.ReadInt(crashAddress + 0x80) * 1.5));
                     //Memory.Write(crashAddress + 0x84, 0x1000000);
                     //Memory.Write(crashAddress + 0x20, (short) 0x7000);
 
                     //for (uint i = 0x28; i <= 0x3E; i+= 0x2) {
                     //    Memory.Write(crashAddress + i, (short)0x7000);
                     //}
-                    Log.Logger.Information($"bscale x: 0x{Memory.ReadInt(crashAddress + 0x78):X}");
-                    Log.Logger.Information($"bscale y: 0x{Memory.ReadInt(crashAddress + 0x7C):X}");
-                    Log.Logger.Information($"bscale z: 0x{Memory.ReadInt(crashAddress + 0x80):X}");
+                    //Log.Logger.Information($"bscale x: 0x{Memory.ReadInt(crashAddress + 0x78):X}");
+                    //Log.Logger.Information($"bscale y: 0x{Memory.ReadInt(crashAddress + 0x7C):X}");
+                    //Log.Logger.Information($"bscale z: 0x{Memory.ReadInt(crashAddress + 0x80):X}");
                     //small crash
                     //Memory.Write(crashAddress + 0x78, (int) (Memory.ReadInt(crashAddress + 0x78) * 0.2));
                     //Memory.Write(crashAddress + 0x7C, (int) (Memory.ReadInt(crashAddress + 0x7C) * 0.2));
                     //Memory.Write(crashAddress + 0x80, (int) (Memory.ReadInt(crashAddress + 0x80) * 0.2));
-                    
+
 
                     //memsnaptimer = new Timer();
                     //memsnaptimer.Interval = 6000;
@@ -195,15 +199,15 @@ public partial class App : Application
                     //memsnaptimer.Enabled = true;
                     //memsnaptimer.Start();
 
-                    Log.Logger.Information($"scale x: 0x{Memory.ReadInt(crashAddress + 0x78):X}");
-                    Log.Logger.Information($"scale y: 0x{Memory.ReadInt(crashAddress + 0x7C):X}");
-                    Log.Logger.Information($"scale z: 0x{Memory.ReadInt(crashAddress + 0x80):X}");
-                    Log.Logger.Information($"velocity x: 0x{Memory.ReadInt(crashAddress + 0x84):X}");
-                    Log.Logger.Information($"velocity y: 0x{Memory.ReadInt(crashAddress + 0x88):X}");
-                    Log.Logger.Information($"velocity z: 0x{Memory.ReadInt(crashAddress + 0x8C):X}");
+                    //Log.Logger.Information($"scale x: 0x{Memory.ReadInt(crashAddress + 0x78):X}");
+                    //Log.Logger.Information($"scale y: 0x{Memory.ReadInt(crashAddress + 0x7C):X}");
+                    //Log.Logger.Information($"scale z: 0x{Memory.ReadInt(crashAddress + 0x80):X}");
+                    //Log.Logger.Information($"velocity x: 0x{Memory.ReadInt(crashAddress + 0x84):X}");
+                    //Log.Logger.Information($"velocity y: 0x{Memory.ReadInt(crashAddress + 0x88):X}");
+                    //Log.Logger.Information($"velocity z: 0x{Memory.ReadInt(crashAddress + 0x8C):X}");
 
-                    Log.Logger.Information($"speed: 0x{Memory.ReadInt(crashAddress + 0x104):X}");
-                    Log.Logger.Information($"cam zoom: 0x{Memory.ReadInt(crashAddress + 0x120):X}");
+                    //Log.Logger.Information($"speed: 0x{Memory.ReadInt(crashAddress + 0x104):X}");
+                    //Log.Logger.Information($"cam zoom: 0x{Memory.ReadInt(crashAddress + 0x120):X}");
 
                 }
                 break;
