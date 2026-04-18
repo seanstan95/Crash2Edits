@@ -102,15 +102,15 @@ namespace C2AP
                     Buffer.BlockCopy(MontyHallSpawnList, 0, bytes, 0, bytes.Length);
                     Memory.Write(Addresses.MontyHallSpawnIndexList, bytes);
 
-                    if (WarpLevelOverridesLeveldHook != null)
-                    {
-                        WarpLevelOverridesLeveldHook.RemoveHook();
-                    }
-                    // make it so the exit level override for totally fly is whatever level unlocks totally fly
-                    WarpLevelOverridesLeveldHook = new CustomHook([
-                        $"ori $v1, $zero, 0x{new_montyhall_secret_entrances[0]:X}"
-                    ]);
-                    WarpLevelOverridesLeveldHook.InsertHookInJumptable(Addresses.JumptableWarpLevelOverrideLevelD, Addresses.JumptableWarpLevelOverrideBreak, 0xf020);
+                    //if (WarpLevelOverridesLeveldHook != null)
+                    //{
+                    //    WarpLevelOverridesLeveldHook.RemoveHook();
+                    //}
+                    //// make it so the exit level override for totally fly is whatever level unlocks totally fly
+                    //WarpLevelOverridesLeveldHook = new CustomHook([
+                    //    $"ori $v1, $zero, 0x{new_montyhall_secret_entrances[0]:X}"
+                    //]);
+                    //WarpLevelOverridesLeveldHook.InsertHookInJumptable(Addresses.JumptableWarpLevelOverrideLevelD, Addresses.JumptableWarpLevelOverrideBreak, 0xf020);
 
                     Memory.WriteByte(Addresses.WarpLevelOverrideTotallyBear, (byte)new_montyhall_secret_entrances[1]); // needs to be whatever level unlocks totally bear
                     Memory.WriteByte(Addresses.WarpLevelOverrideRooWin, (byte)montyhall_remap[0x11]);

@@ -98,7 +98,7 @@ public partial class App : Application
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.2");
-        Context.ClientVersion = "v0.3.0-pre3";
+        Context.ClientVersion = "v0.3.0";
         Context.ConnectClicked += Context_ConnectClicked;
         Context.CommandReceived += (e, a) =>
         {
@@ -150,7 +150,7 @@ public partial class App : Application
                 _useQuietHints = false;
                 break;
             case "exec":
-                
+
                 //uint crashAddress = CrashObject.FindObjectAddress(0, 0);
                 //if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
                 //{
@@ -160,7 +160,18 @@ public partial class App : Application
 
 
                 //}
-                Log.Logger.Information($"{Memory.ReadUInt(Addresses.DemoPointer):X}");
+                //uint bearAddress = CrashObject.FindObjectAddress(48, 0);
+                //if (bearAddress != 0 && bearAddress != CrashObject.cacheOffset)
+                //{
+                //    //Memory.Write(bearAddress, 0);
+                //    Memory.Write(bearAddress + 0x64, 0x0fffffff);
+                //    //Memory.Write(bearAddress + 0x78, 0);
+                //    //Memory.Write(bearAddress + 0x7C, 0);
+                //    //Memory.Write(bearAddress + 0x80, 0);
+                //    Log.Logger.Information($"Bear object set to 0.");
+                //}
+                    
+
                 break;
             case "itemstate":
                 if (Client.ItemState == null) break;
@@ -178,22 +189,22 @@ public partial class App : Application
                     Log.Logger.Information($"{location.Name}");
                 }
                 break;
-            case "debug_markbosses":
-                uint address;
-                int[] bossBits = [
-                    Addresses.levelNameToId["Dr. N. Gin"],
-                    Addresses.levelNameToId["Ripper Roo"],
-                    Addresses.levelNameToId["Komodo Brothers"],
-                    Addresses.levelNameToId["Tiny Tiger"],
+            //case "debug_markbosses":
+            //    uint address;
+            //    int[] bossBits = [
+            //        Addresses.levelNameToId["Dr. N. Gin"],
+            //        Addresses.levelNameToId["Ripper Roo"],
+            //        Addresses.levelNameToId["Komodo Brothers"],
+            //        Addresses.levelNameToId["Tiny Tiger"],
 
-                ];
-                for (int i = 0; i < bossBits.Length; i++)
-                {
-                    address = Addresses.LevelExitsAddress + (uint)bossBits[i] / 8;
-                    int bit = bossBits[i] % 8;
-                    Memory.WriteBit(address, bit, true);
-                }
-                break;
+            //    ];
+            //    for (int i = 0; i < bossBits.Length; i++)
+            //    {
+            //        address = Addresses.LevelExitsAddress + (uint)bossBits[i] / 8;
+            //        int bit = bossBits[i] % 8;
+            //        Memory.WriteBit(address, bit, true);
+            //    }
+            //    break;
                 //case "debug_sendgoal":
                 //    Client.SendGoalCompletion();
                 //    break;
