@@ -68,6 +68,10 @@ namespace C2AP
                     break;
                 case 't':
                     result = 0x8;
+                    if (register[2] == '8' || register[2] == '9')
+                    {
+                        Log.Error("$t8 & $t9 are not encode-able yet");
+                    }
                     break;
                 case 's':
                     if (register[2] == 'p')
@@ -76,6 +80,9 @@ namespace C2AP
                     }
                     result = 0x10;
                     break;
+                case 'r': // $ra
+                    return 0x1F;
+
 
             }
             
@@ -223,6 +230,25 @@ namespace C2AP
                             bytes.AddRange(instructionBytes);
                             break;
                         }
+                    case "jal":
+                        {
+                            instructionBytes[0] = 0x0C;
+                            if (instruction.Length != 2)
+                            {
+                                Log.Error($"CustomHook: Invalid jal instruction format at line {i + 1}");
+                                break;
+                            }
+                            instruction[1] = instruction[1].Replace("0x", "");
+                            address = Convert.ToUInt32(instruction[1], 16);
+                            address >>= 2;
+                            instructionBytes[0] = (byte)(instructionBytes[0] | ((address >> 24) & 0x03));
+                            instructionBytes[1] = (byte)((address >> 16) & 0xFF);
+                            instructionBytes[2] = (byte)((address >> 8) & 0xFF);
+                            instructionBytes[3] = (byte)(address & 0xFF);
+                            instructionBytes.Reverse();
+                            bytes.AddRange(instructionBytes);
+                            break;
+                        }
                     case "nop":
                         {
                             bytes.AddRange(instructionBytes);
@@ -249,7 +275,7 @@ namespace C2AP
                             instruction[2] = instruction[2].Replace("0x", "");
                             address = Convert.ToUInt32(instruction[2], 16);
                             upper = (ushort)(address >> 16);
-                            upper++;
+                            if (upper != 0) upper++;
 
                             immed = upper;
 

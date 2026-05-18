@@ -78,6 +78,10 @@ namespace C2AP
         public const uint ContinuePointFlagList = 0x00060c2c;
         public const uint ContinuePoint2FlagList = 0x00061c8c;
 
+        public const uint SendEventFlag = 0x0000E9FC; // used to call send event just once
+        public const uint EventArgv = 0x0000E9D0; // enough space for 11 arguments
+        public const uint SendEventFunction = 0x0001CD48;
+
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {
             //crystals

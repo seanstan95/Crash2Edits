@@ -129,6 +129,7 @@ public partial class App : Application
 
     private void HandleCommand(string command)
     {
+        string[] args = command.Split(' ');
         switch (command)
         {
             case "clearCrashGameState":
@@ -150,27 +151,30 @@ public partial class App : Application
                 _useQuietHints = false;
                 break;
             case "exec":
-
-                //uint crashAddress = CrashObject.FindObjectAddress(0, 0);
-                //if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
-                //{
+                if (args.Length > 1) break;
+                uint crashAddress = CrashObject.FindObjectAddress(0, 0);
+                if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
+                {
+                    Log.Logger.Information($"crash address: {crashAddress + CrashObject.cacheOffset:X}");
+                    CrashFunction.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 9 << 8, 1, [100 << 8]);
+                }
                 //    Log.Logger.Information($"trans x: {Memory.ReadFloat(crashAddress + 0x60)}");
                 //    Log.Logger.Information($"trans y: {Memory.ReadFloat(crashAddress + 0x64)}");
                 //    Log.Logger.Information($"trans z: {Memory.ReadFloat(crashAddress + 0x68)}");
 
 
-                //}
-                //uint bearAddress = CrashObject.FindObjectAddress(48, 0);
-                //if (bearAddress != 0 && bearAddress != CrashObject.cacheOffset)
-                //{
-                //    //Memory.Write(bearAddress, 0);
-                //    Memory.Write(bearAddress + 0x64, 0x0fffffff);
-                //    //Memory.Write(bearAddress + 0x78, 0);
-                //    //Memory.Write(bearAddress + 0x7C, 0);
-                //    //Memory.Write(bearAddress + 0x80, 0);
-                //    Log.Logger.Information($"Bear object set to 0.");
-                //}
-                    
+                    //}
+                    //uint bearAddress = CrashObject.FindObjectAddress(48, 0);
+                    //if (bearAddress != 0 && bearAddress != CrashObject.cacheOffset)
+                    //{
+                    //    //Memory.Write(bearAddress, 0);
+                    //    Memory.Write(bearAddress + 0x64, 0x0fffffff);
+                    //    //Memory.Write(bearAddress + 0x78, 0);
+                    //    //Memory.Write(bearAddress + 0x7C, 0);
+                    //    //Memory.Write(bearAddress + 0x80, 0);
+                    //    Log.Logger.Information($"Bear object set to 0.");
+                    //}
+
 
                 break;
             case "itemstate":
@@ -210,7 +214,7 @@ public partial class App : Application
                 //    break;
 
         }
-        string[] args = command.Split(' ');
+
         if (args.Length == 2)
         {
             //if (args[0] == "giveloc") //testing crystal locations
@@ -236,6 +240,15 @@ public partial class App : Application
                 {
                     byte[] memoryDump = Memory.ReadByteArray(0, 0b1000000000000000000000);
                     fs.Write(memoryDump, 0, memoryDump.Length);
+                }
+            }
+            if (args[0] == "exec")
+            {
+                uint crashAddress = CrashObject.FindObjectAddress(0, 0);
+                if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
+                {
+                    Log.Logger.Information($"crash address: {crashAddress + CrashObject.cacheOffset:X}");
+                    CrashFunction.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, Convert.ToUInt32(args[1]) << 8, 1, [100 << 8]);
                 }
             }
         }
@@ -307,6 +320,7 @@ public partial class App : Application
         //}
         Client.MonitorLocations(GameLocations);
         //FruitCheck.Initialize();
+        CrashFunction.Initialize();
         Traps.Initialize();
         CrashObjectMod.Initialize();
         //Archipelago.MultiClient.Net.

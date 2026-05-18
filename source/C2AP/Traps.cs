@@ -338,7 +338,19 @@ namespace C2AP
                 return;
             }
             if (BaseHooks.ApItemsHook == null) return;
-            jetpackControlsHook.InsertHook(0x15A38, BaseHooks.ApItemsHook._hookSize + BaseHooks.ApItemsHook._freeAddress + 0x4);
+            if (CrashFunction.sendEvent == null) return;
+            if (BaseHooks.ApItemsHook._freeAddress == 0)
+            {
+                Log.Error("Traps must be initialized after BaseHooks");
+                return;
+            }
+            if (CrashFunction.sendEvent._freeAddress == 0)
+            {
+                Log.Error("Traps must be initialized after CrashFunction");
+                return;
+            }
+            Log.Information($"Free add: {BaseHooks.ApItemsHook._hookSize + BaseHooks.ApItemsHook._freeAddress + CrashFunction.sendEvent._hookSize + 0x8 :X}");
+            jetpackControlsHook.InsertHook(0x15A38, BaseHooks.ApItemsHook._hookSize + BaseHooks.ApItemsHook._freeAddress + CrashFunction.sendEvent._hookSize + 0x8);
         }
 
         private static void ResetJetpackControls()
