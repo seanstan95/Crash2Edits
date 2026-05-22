@@ -110,6 +110,7 @@ namespace C2AP
                     //WarpLevelOverridesLeveldHook = new CustomHook([
                     //    $"ori $v1, $zero, 0x{new_montyhall_secret_entrances[0]:X}"
                     //]);
+                    //Log.Error("WarpLevelOverridesLeveldHook and Inputlock currently use overlapping free address");
                     //WarpLevelOverridesLeveldHook.InsertHookInJumptable(Addresses.JumptableWarpLevelOverrideLevelD, Addresses.JumptableWarpLevelOverrideBreak, 0xf020);
 
                     Memory.WriteByte(Addresses.WarpLevelOverrideTotallyBear, (byte)new_montyhall_secret_entrances[1]); // needs to be whatever level unlocks totally bear

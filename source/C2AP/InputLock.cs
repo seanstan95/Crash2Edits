@@ -5,7 +5,7 @@ using System.Net;
 namespace C2AP
 {
     [Flags]
-    internal enum InputFlag : int
+    internal enum InputFlag : uint
     {
         None        = 0x0000,
         Select      = 0x0001,
@@ -21,7 +21,8 @@ namespace C2AP
         Triangle    = 0x1000,
         Circle      = 0x2000,
         Cross       = 0x4000,
-        Square      = 0x8000
+        Square      = 0x8000,
+        All         = 0xfff9,
     }
 
     internal class InputLock
@@ -38,8 +39,16 @@ namespace C2AP
         public static void Initialize()
         {
             //0x15A38 works, also 0x15A0C, 0x15A44
-            _inputHook.InsertHook(0x15A38, 0xf000); //0x15A54
-            Log.Error("Inputlock needs to use a different free address");
+            if (_inputHook._freeAddress == 0)
+            {
+                _inputHook.InsertHook(0x15A0C, 0xf000); //0x15A54
+            }
+            
+            
+            RefreshInputHook();
+            
+            
+            //Log.Information($"InputHook end = {_inputHook._hookSize + _inputHook._freeAddress + 0x4:X}");
         }
 
         private static void RefreshInputHook()
@@ -48,10 +57,11 @@ namespace C2AP
             _inputHook.ReplaceAsm([
                         $"la $t0, 0x{Addresses.InputsAddress + Addresses.CacheOffset:X}",
                         "lw $t1, 0($t0)",
-                        $"la $t2, 0x{val:X}",
+                        $"la $t2, 0x{val:X}", //can be optimized to just lui
                         "or $t1, $t1, $t2",
                         "sw $t1, 0($t0)",
                         ]);
+            //Log.Information($"InputHook end = {_inputHook._hookSize + _inputHook._freeAddress + 0x4:X}");
             //Log.Information($"la $t2, 0x{val:X}");
         }
         public static void LockInput(InputFlag flag)
@@ -61,19 +71,25 @@ namespace C2AP
                 return;
             }
             _inputflag |= flag;
+            //Log.Information($"inputflag = {_inputflag:X}");
             RefreshInputHook();
         }
 
         public static void UnlockInput(InputFlag flag)
         {
-            Log.Information($"a1");
+            //Log.Information($"a1");
             if ( (_inputflag & flag) == 0)
             {
                 return;
             }
-            Log.Information($"a2");
+            //Log.Information($"a2");
             _inputflag &= ~flag;
             RefreshInputHook();
+        }
+
+        public static InputFlag GetLockedInputs()
+        {
+            return _inputflag;
         }
     }
 }

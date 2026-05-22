@@ -1,8 +1,11 @@
 ﻿using Archipelago.Core.Models;
 using Archipelago.Core.Util;
+using Serilog;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Timers;
 using static C2AP.Models.Enums;
 using Location = Archipelago.Core.Models.Location;
 namespace C2AP
@@ -11,6 +14,11 @@ namespace C2AP
     {
         private static GameStatus lastNonZeroStatus = GameStatus.Spawning;
         public static bool lastInGameStatus = false;
+
+        private static Timer checkEmulation = new Timer(100);
+
+        private static uint previousTime = 0;
+        private static bool isEmulationPaused = true;
         public static string OpenEmbeddedResource(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -21,7 +29,32 @@ namespace C2AP
                 return jsonFile;
             }
         }
+
+        public static void StartCheckEmulationPaused()
+        {
+            checkEmulation.Elapsed += (s, ev) =>
+            {
+                uint time = Memory.ReadUInt(Addresses.Timer);
+                isEmulationPaused = time == previousTime;
+                previousTime = time;
+                //uint crashAddress = CrashObject.FindObjectAddress(0, 0);
+                //if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
+                //{
+                //    Log.Logger.Information($"crash state: {Memory.ReadUInt(crashAddress + 0x1C)}");
+                //}
+            };
+            checkEmulation.Start(); 
+        }
         
+        public static bool IsEmulationPaused()
+        {
+            return isEmulationPaused;
+        }
+        public static bool IsGamePaused()
+        {
+            return Memory.ReadUInt(Addresses.PausedFlag) != 0;
+        }
+
         public static bool IsInGame()
         {
             //Log.Debug($"Text: {Addresses.StaticText}");
@@ -144,6 +177,9 @@ namespace C2AP
             return locations;
         }
 
-        
+        //public static void ClearHookMemory()
+        //{
+        //    Memory.WriteByteArray(0xf000, new byte[0x0fff]);
+        //}
     }
 }

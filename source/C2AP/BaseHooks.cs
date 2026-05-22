@@ -37,7 +37,7 @@ namespace C2AP
                 "sw $t1, 0x8($sp)",
                 "sw $t2, 0xc($sp)",
                 //"sw $t3, 0x10($sp)",
-                "la $t0, 0x8005f418", //address of "paused"
+                $"la $t0, 0x{Addresses.PausedFlag + offset:X}", //address of "paused"
                 "lw $t1, 0($t0)",
                 "nop", //load delay
                 "beq $t1 $zero, 0x12", //"bne $t0 $zero, 0x8", //"beq $t1 $zero, 0x8", //branch to colored gem check
@@ -89,7 +89,7 @@ namespace C2AP
                 //increment collected test by 4
                 
 
-                $"la $t0, 0x{Addresses.FruitCollectedListStart:X}",
+                $"la $t0, 0x{Addresses.FruitCollectedListStart + offset:X}",
                 "lw $t1, 0($t0)",
                 "nop",
                 "addiu $t1, $t1, 0x4",

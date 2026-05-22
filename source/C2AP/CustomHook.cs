@@ -50,7 +50,9 @@ namespace C2AP
             RemoveHook();
             _asm = asm;
             _bytes = ConvertAsm(asm);
+            //Log.Information("replaceasm1");
             InsertHook(targetAddress, freeAddress);
+            //Log.Information("replaceasm2");
         }
 
         private static byte EncodeRegister(string register)
@@ -275,13 +277,15 @@ namespace C2AP
                             instruction[2] = instruction[2].Replace("0x", "");
                             address = Convert.ToUInt32(instruction[2], 16);
                             upper = (ushort)(address >> 16);
-                            if (upper != 0) upper++;
+                            if (upper != 0) 
+                                upper++;
 
                             immed = upper;
 
                             bytes.AddRange(ConvertToBytes(opcode, rs, rt, immed));
 
                             opcode = 0x9; //addiu
+                            //opcode = 0x0D; //ori
                             immed = address & 0xFFFF;
                             rs = rt;
 

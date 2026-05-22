@@ -7,6 +7,7 @@ using Archipelago.Core.Models;
 using Archipelago.Core.Traps;
 using Archipelago.Core.Util;
 using Archipelago.Core.Util.Hook;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Archipelago.MultiClient.Net.Packets;
@@ -70,6 +71,7 @@ public partial class App : Application
     }
 
     private static CrashState crashState = new CrashState();
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -98,7 +100,7 @@ public partial class App : Application
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.2");
-        Context.ClientVersion = "v0.3.0";
+        Context.ClientVersion = "v0.3.1";
         Context.ConnectClicked += Context_ConnectClicked;
         Context.CommandReceived += (e, a) =>
         {
@@ -152,28 +154,44 @@ public partial class App : Application
                 break;
             case "exec":
                 if (args.Length > 1) break;
-                uint crashAddress = CrashObject.FindObjectAddress(0, 0);
-                if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
-                {
-                    Log.Logger.Information($"crash address: {crashAddress + CrashObject.cacheOffset:X}");
-                    CrashFunction.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 9 << 8, 1, [100 << 8]);
-                }
+                //uint crashAddress = CrashObject.FindObjectAddress(0, 0);
+                //if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
+                //{
+                //    //    Log.Logger.Information($"crash address: {crashAddress + CrashObject.cacheOffset:X}");
+                //    //    //Log.Logger.Information($"trans x: {Memory.ReadFloat(crashAddress + 0x60)}");
+                //    //    Log.Logger.Information($"trans y: {Memory.ReadInt(crashAddress + 0x64)}");
+                //    //    //Log.Logger.Information($"trans z: {Memory.ReadFloat(crashAddress + 0x68)}");
+                //    //    //Memory.Write(crashAddress + 0x60, Memory.ReadFloat(crashAddress + 0x60) * 1.1f);
+                //    //    Memory.Write(crashAddress + 0x64, 0x00ffffff);
+                //    //    //Memory.Write(crashAddress + 0x68, Memory.ReadFloat(crashAddress + 0x68) * 1.1f);
+                //    //    //Log.Logger.Information($"new trans x: {Memory.ReadFloat(crashAddress + 0x60)}");
+                //    //    Log.Logger.Information($"new trans y: {Memory.ReadInt(crashAddress + 0x64)}");
+                //    //    //Log.Logger.Information($"new trans z: {Memory.ReadFloat(crashAddress + 0x68)}");
+                //    //    //Memory.Write(crashAddress + 0x78, 0x0fffffff);
+                //    //    //Memory.Write(crashAddress + 0x7C, 0x0fffffff);
+                //    //    //Memory.Write(crashAddress + 0x80, 0x0fffffff);
+                //    // CrashEvent.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 0x2300, 1, [0x6400]);
+                //}
+
+                CrashDeathLink.OnDeathLinkReceived(new("test"));
+                
+
                 //    Log.Logger.Information($"trans x: {Memory.ReadFloat(crashAddress + 0x60)}");
                 //    Log.Logger.Information($"trans y: {Memory.ReadFloat(crashAddress + 0x64)}");
                 //    Log.Logger.Information($"trans z: {Memory.ReadFloat(crashAddress + 0x68)}");
 
 
-                    //}
-                    //uint bearAddress = CrashObject.FindObjectAddress(48, 0);
-                    //if (bearAddress != 0 && bearAddress != CrashObject.cacheOffset)
-                    //{
-                    //    //Memory.Write(bearAddress, 0);
-                    //    Memory.Write(bearAddress + 0x64, 0x0fffffff);
-                    //    //Memory.Write(bearAddress + 0x78, 0);
-                    //    //Memory.Write(bearAddress + 0x7C, 0);
-                    //    //Memory.Write(bearAddress + 0x80, 0);
-                    //    Log.Logger.Information($"Bear object set to 0.");
-                    //}
+                //}
+                //uint bearAddress = CrashObject.FindObjectAddress(48, 0);
+                //if (bearAddress != 0 && bearAddress != CrashObject.cacheOffset)
+                //{
+                //    //Memory.Write(bearAddress, 0);
+                //    Memory.Write(bearAddress + 0x64, 0x0fffffff);
+                //    //Memory.Write(bearAddress + 0x78, 0);
+                //    //Memory.Write(bearAddress + 0x7C, 0);
+                //    //Memory.Write(bearAddress + 0x80, 0);
+                //    Log.Logger.Information($"Bear object set to 0.");
+                //}
 
 
                 break;
@@ -193,25 +211,37 @@ public partial class App : Application
                     Log.Logger.Information($"{location.Name}");
                 }
                 break;
-            //case "debug_markbosses":
-            //    uint address;
-            //    int[] bossBits = [
-            //        Addresses.levelNameToId["Dr. N. Gin"],
-            //        Addresses.levelNameToId["Ripper Roo"],
-            //        Addresses.levelNameToId["Komodo Brothers"],
-            //        Addresses.levelNameToId["Tiny Tiger"],
+            case "debug_openwarproom":
+                // mark bosses as complete
+                uint address;
+                int[] bossBits = [
+                    Addresses.levelNameToId["Dr. N. Gin"],
+                    Addresses.levelNameToId["Ripper Roo"],
+                    Addresses.levelNameToId["Komodo Brothers"],
+                    Addresses.levelNameToId["Tiny Tiger"],
 
-            //    ];
-            //    for (int i = 0; i < bossBits.Length; i++)
-            //    {
-            //        address = Addresses.LevelExitsAddress + (uint)bossBits[i] / 8;
-            //        int bit = bossBits[i] % 8;
-            //        Memory.WriteBit(address, bit, true);
-            //    }
-            //    break;
+                ];
+                for (int i = 0; i < bossBits.Length; i++)
+                {
+                    address = Addresses.LevelExitsAddress + (uint)bossBits[i] / 8;
+                    int bit = bossBits[i] % 8;
+                    Memory.WriteBit(address, bit, true);
+                }
+                // mark secret entrances as open
+                Memory.Write(Addresses.SecretEntranceFlags, 0x1f);
+
+                // set to 25 crystals
+                crashState.Crystals = 25;
+                UpdateCrashState();
+
+                break;
                 //case "debug_sendgoal":
                 //    Client.SendGoalCompletion();
                 //    break;
+
+                //address = CrystalAddress + (uint)levelid / 8;
+                //int bit = levelid % 8;
+                //Memory.WriteBit(address, bit, true);
 
         }
 
@@ -248,7 +278,10 @@ public partial class App : Application
                 if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
                 {
                     Log.Logger.Information($"crash address: {crashAddress + CrashObject.cacheOffset:X}");
-                    CrashFunction.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, Convert.ToUInt32(args[1]) << 8, 1, [100 << 8]);
+                    
+                    Log.Logger.Information($"crash state: {Memory.ReadUInt(crashAddress + 0x1C)}");
+                    CrashEvent.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, Convert.ToUInt32(args[1]) << 8, 1, [100 << 8]);
+                    
                 }
             }
         }
@@ -289,6 +322,7 @@ public partial class App : Application
 
         //InputLock.Initialize();
         //InputLock.LockInput(InputFlag.Square);
+        //Helpers.ClearHookMemory();
         BaseHooks.Initialize();
 
         
@@ -318,14 +352,23 @@ public partial class App : Application
         //{
         //    Log.Logger.Error("Failed to login.  Please check your host, name, and password.");
         //}
+
+        if (true)
+        {
+            CrashDeathLink.Enable(e.Slot);
+        }
         Client.MonitorLocations(GameLocations);
-        //FruitCheck.Initialize();
-        CrashFunction.Initialize();
+        InputLock.Initialize();
+        
+        InputLock.LockInput(InputFlag.All);
+        InputLock.UnlockInput(InputFlag.All);
+        CrashEvent.Initialize();
         Traps.Initialize();
         CrashObjectMod.Initialize();
-        //Archipelago.MultiClient.Net.
+        Helpers.StartCheckEmulationPaused();
     }
 
+    
     private void UpdateGemLocationsChecked()
     {
         Log.Debug("UpdateGemLocationsChecked");
@@ -557,15 +600,21 @@ public partial class App : Application
                 crashState.YellowGem = true;
                 break;
             case "Life":
+                //CrashFunction.EnqueueEvent(CrashFunction.Event.GiveLife);
                 crashAddress = CrashObject.FindObjectAddress(0, 0);
                 if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
                 {
+                    if (Memory.ReadByte(crashAddress + Addresses.LivesOffset) >= 99)
+                        return;
                     IncrementByte(crashAddress + Addresses.LivesOffset);
                 }
+                if (Memory.ReadByte(Addresses.LivesGlobalAddress) >= 99)
+                    return;
                 IncrementByte(Addresses.LivesGlobalAddress);
                 return;
                 //break;
             case "Wumpa Fruit":
+                //CrashFunction.EnqueueEvent(CrashFunction.Event.GiveWumpa);
                 crashAddress = CrashObject.FindObjectAddress(0, 0);
                 if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
                 {

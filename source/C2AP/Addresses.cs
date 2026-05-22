@@ -29,7 +29,7 @@ namespace C2AP
 
         public const uint InputsAddress = 0x00069BB8; //32 bits, each bit is an input
 
-        public const uint LevelIdAddress = 0x6ce08; //32 bits (hopefully)
+        public const uint LevelIdAddress = 0x6ce08; //32 bits (hopefully) // global 0
 
         public const uint LevelExitsAddress = 0x6ce74; //64 bits
         public const uint SecretExitsAddress = 0x6ce79;
@@ -81,6 +81,10 @@ namespace C2AP
         public const uint SendEventFlag = 0x0000E9FC; // used to call send event just once
         public const uint EventArgv = 0x0000E9D0; // enough space for 11 arguments
         public const uint SendEventFunction = 0x0001CD48;
+
+        public const uint Timer = 0x0006cdfc;
+        public const uint PausedFlag = 0x0005f418;
+        public const uint SecretEntranceFlags = 0x0006d060;
 
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {
