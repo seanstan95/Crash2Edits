@@ -123,13 +123,13 @@ namespace C2AP
                     uint state = Memory.ReadUInt(crashAddress + 0x1C);
                     Log.Logger.Information($"crash state: {state}");
                     {
-                        if (state == 38 || (state >= 65 && state <= 70) || state == 100 || state == 105 || state == 109 || state == 117 || state == 118)
+                        if (state == 38 || (state >= 65 && state <= 70) || state == 100 || state == 105 || state == 117 || state == 118)
                         {
                             // these states need to be interrupted with event 39
                             // so if we are on a level where event 39 is unavailable, we must wait
                             // bear it, rock it, pack attack, cortex
-                            uint levelId = 0;
-                            if (levelId == 0x1D || levelId == 0x12 || levelId == 0x1A || levelId == 0x07)
+                            uint levelId = Memory.ReadUInt(Addresses.LevelIdAddress);
+                            if (levelId == 0x1D00 || levelId == 0x1200 || levelId == 0x1A00 || levelId == 0x0700)
                             {
                                 return false;
                             }
