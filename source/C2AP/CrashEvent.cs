@@ -274,7 +274,7 @@ namespace C2AP
             }
 
             // write event args
-            for (uint i = 0; i < eventArgc; i++)
+            for (uint i = 0; i < eventArgc && i <= 11; i++)
             {
                 Memory.Write(Addresses.EventArgv + 0x4 * i, eventArgv[i]);
             }
