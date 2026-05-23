@@ -1,6 +1,7 @@
 ﻿using Archipelago.Core.Util;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Serilog;
+using System;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -16,8 +17,17 @@ namespace C2AP
         private static string playerName = "";
         private static Timer checkDeathTimer = new Timer(250);
 
-        public static void Enable(string name)
+        public static void Initialize(string name)
         {
+            App.Client.Options.TryGetValue("death_link", out var deathLink);
+            if (deathLink == null)
+            {
+                Log.Logger.Error($"option null");
+                return;
+            }
+            Log.Information($"option : {deathLink}");
+            if (Convert.ToInt32(deathLink.ToString()) != 1) return;
+            
             deathLinkService = App.Client.EnableDeathLink();
             deathLinkService.EnableDeathLink();
             deathLinkService.OnDeathLinkReceived += OnDeathLinkReceived;

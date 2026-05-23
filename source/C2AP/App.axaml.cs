@@ -17,6 +17,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.OpenGL;
+using DynamicData.Kernel;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
@@ -100,7 +101,7 @@ public partial class App : Application
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.2");
-        Context.ClientVersion = "v0.3.1";
+        Context.ClientVersion = "v0.4.0-pre";
         Context.ConnectClicked += Context_ConnectClicked;
         Context.CommandReceived += (e, a) =>
         {
@@ -245,7 +246,7 @@ public partial class App : Application
 
         }
 
-        if (args.Length == 2)
+        if (args.Length >= 2)
         {
             //if (args[0] == "giveloc") //testing crystal locations
             //{
@@ -274,13 +275,21 @@ public partial class App : Application
             }
             if (args[0] == "exec")
             {
+                List<uint> eventArgv = new();
+                //Log.Logger.Information($"try exec");
+                for (int i = 2; i < args.Length; i++)
+                {
+                    //Log.Logger.Information($"adding: {Convert.ToUInt32(args[i]) << 8}");
+                    eventArgv.Add(Convert.ToUInt32(args[i]) << 8);
+                }
+                //Log.Logger.Information($"find crash");
                 uint crashAddress = CrashObject.FindObjectAddress(0, 0);
                 if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
                 {
                     Log.Logger.Information($"crash address: {crashAddress + CrashObject.cacheOffset:X}");
                     
                     Log.Logger.Information($"crash state: {Memory.ReadUInt(crashAddress + 0x1C)}");
-                    CrashEvent.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, Convert.ToUInt32(args[1]) << 8, 1, [100 << 8]);
+                    CrashEvent.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, Convert.ToUInt32(args[1]) << 8, (uint)eventArgv.Count, eventArgv.AsArray());
                     
                 }
             }
@@ -353,10 +362,9 @@ public partial class App : Application
         //    Log.Logger.Error("Failed to login.  Please check your host, name, and password.");
         //}
 
-        if (true)
-        {
-            CrashDeathLink.Enable(e.Slot);
-        }
+        
+        CrashDeathLink.Initialize(e.Slot);
+        
         Client.MonitorLocations(GameLocations);
         InputLock.Initialize();
         
