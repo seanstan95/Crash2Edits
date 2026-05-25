@@ -28,6 +28,8 @@ namespace C2AP
         private static double bigCrashSizeMult = 1.5;
         private static double smallCrashSizeMult = 0.33;
 
+        public static ulong trapsHookSize = 0;
+
         private static CustomHook jetpackControlsHook = new CustomHook([//"nop"]);
             $"la $t0, 0x{Addresses.InputsAddress + Addresses.CacheOffset:X}",
             "lw $t1, 0($t0)",
@@ -171,6 +173,7 @@ namespace C2AP
             //trapDuration = 100 * 1000 / tickRate;
             crashAddress = CrashObject.FindObjectAddress(0, 0);
             ApplyJetpackControls();
+            trapsHookSize = jetpackControlsHook._hookSize;
             ResetJetpackControls();
             ResetCrashSize();
 

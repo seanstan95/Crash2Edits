@@ -52,7 +52,11 @@ public partial class App : Application
     private static bool _hasSubmittedGoal { get; set; }
     private static bool _useQuietHints { get; set; }
 
-    private class CrashState
+    private static uint _execCount;
+
+    private static uint[] _execParam = [];
+
+    public class CrashState
     {
         public uint Crystals;
         public uint ClearGems;
@@ -69,9 +73,15 @@ public partial class App : Application
         public bool BlueGem;
         public bool YellowGem;
 
+        // unlocked gimmicks
+        public bool Polar;
+        public bool Jetpack;
+        public bool Jetboard;
+        public bool Fireflies;
+
     }
 
-    private static CrashState crashState = new CrashState();
+    public static CrashState crashState = new CrashState();
 
     public override void Initialize()
     {
@@ -101,7 +111,7 @@ public partial class App : Application
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.2");
-        Context.ClientVersion = "v0.4.0-pre";
+        Context.ClientVersion = "v0.4.0-pre2";
         Context.ConnectClicked += Context_ConnectClicked;
         Context.CommandReceived += (e, a) =>
         {
@@ -133,6 +143,7 @@ public partial class App : Application
     private void HandleCommand(string command)
     {
         string[] args = command.Split(' ');
+        uint crashAddress;
         switch (command)
         {
             case "clearCrashGameState":
@@ -155,8 +166,10 @@ public partial class App : Application
                 break;
             case "exec":
                 if (args.Length > 1) break;
-                //uint crashAddress = CrashObject.FindObjectAddress(0, 0);
-                //if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
+                crashAddress = CrashObject.FindObjectAddress(0, 0);
+                if (crashAddress == 0 || crashAddress == CrashObject.cacheOffset) break;
+                uint state = Memory.ReadUInt(crashAddress + 0x1C);
+                Log.Logger.Information($"crash state: {state}");
                 //{
                 //    //    Log.Logger.Information($"crash address: {crashAddress + CrashObject.cacheOffset:X}");
                 //    //    //Log.Logger.Information($"trans x: {Memory.ReadFloat(crashAddress + 0x60)}");
@@ -174,8 +187,8 @@ public partial class App : Application
                 //    // CrashEvent.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 0x2300, 1, [0x6400]);
                 //}
 
-                CrashDeathLink.OnDeathLinkReceived(new("test"));
-                
+                ////// CrashDeathLink.OnDeathLinkReceived(new("test"));
+
 
                 //    Log.Logger.Information($"trans x: {Memory.ReadFloat(crashAddress + 0x60)}");
                 //    Log.Logger.Information($"trans y: {Memory.ReadFloat(crashAddress + 0x64)}");
@@ -183,18 +196,29 @@ public partial class App : Application
 
 
                 //}
-                //uint bearAddress = CrashObject.FindObjectAddress(48, 0);
-                //if (bearAddress != 0 && bearAddress != CrashObject.cacheOffset)
-                //{
-                //    //Memory.Write(bearAddress, 0);
-                //    Memory.Write(bearAddress + 0x64, 0x0fffffff);
-                //    //Memory.Write(bearAddress + 0x78, 0);
-                //    //Memory.Write(bearAddress + 0x7C, 0);
-                //    //Memory.Write(bearAddress + 0x80, 0);
-                //    Log.Logger.Information($"Bear object set to 0.");
-                //}
+                uint bearAddress = CrashObject.FindObjectAddress(48, 0);
+                if (bearAddress != 0 && bearAddress != CrashObject.cacheOffset)
+                {
+                    //Memory.Write(bearAddress, 0);
+                    Memory.Write(bearAddress + 0x64, 0x0fffffff);
+                    //Memory.Write(bearAddress + 0x78, 0);
+                    //Memory.Write(bearAddress + 0x7C, 0);
+                    //Memory.Write(bearAddress + 0x80, 0);
+                    //Log.Logger.Information($"Bear object set to 0.");
+                    //Log.Logger.Information($"Bear object set to 0.");
+                }
 
-
+                // Bear: everything but last jump in Totally Bear
+                // Jetpack: rock it crystal is impossible
+                break;
+            case "c":
+                if (args.Length > 1) break;
+                crashAddress = CrashObject.FindObjectAddress(0, 0);
+                if (crashAddress == 0 || crashAddress == CrashObject.cacheOffset) break;
+                Log.Logger.Information($"Running Event Id: {_execCount}");
+                Log.Logger.Information($"crash state: {Memory.ReadUInt(crashAddress + 0x1C)}");
+                CrashEvent.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, _execCount << 8, (uint)_execParam.Length, _execParam);
+                _execCount++;
                 break;
             case "itemstate":
                 if (Client.ItemState == null) break;
@@ -283,7 +307,7 @@ public partial class App : Application
                     eventArgv.Add(Convert.ToUInt32(args[i]) << 8);
                 }
                 //Log.Logger.Information($"find crash");
-                uint crashAddress = CrashObject.FindObjectAddress(0, 0);
+                crashAddress = CrashObject.FindObjectAddress(0, 0);
                 if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
                 {
                     Log.Logger.Information($"crash address: {crashAddress + CrashObject.cacheOffset:X}");
@@ -292,6 +316,18 @@ public partial class App : Application
                     CrashEvent.CallSendEvent(0, crashAddress + CrashObject.cacheOffset, Convert.ToUInt32(args[1]) << 8, (uint)eventArgv.Count, eventArgv.AsArray());
                     
                 }
+            }
+            if (args[0] == "c")
+            {
+                List<uint> eventArgv = new();
+                //Log.Logger.Information($"try exec");
+                for (int i = 2; i < args.Length; i++)
+                {
+                    //Log.Logger.Information($"adding: {Convert.ToUInt32(args[i]) << 8}");
+                    eventArgv.Add(Convert.ToUInt32(args[i]) << 8);
+                }
+                _execCount = Convert.ToUInt32(args[1]);
+                _execParam = eventArgv.AsArray();
             }
         }
     }
@@ -367,12 +403,14 @@ public partial class App : Application
         
         Client.MonitorLocations(GameLocations);
         InputLock.Initialize();
-        
+
         InputLock.LockInput(InputFlag.All);
         InputLock.UnlockInput(InputFlag.All);
+        
         CrashEvent.Initialize();
         Traps.Initialize();
         CrashObjectMod.Initialize();
+        GimmickLock.Initialize();
         Helpers.StartCheckEmulationPaused();
     }
 

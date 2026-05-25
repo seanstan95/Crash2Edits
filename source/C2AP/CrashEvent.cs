@@ -21,15 +21,29 @@ namespace C2AP
             LockInput,
             UnlockInput,
             InterruptCrash,
-            Event70,
+            LandCrash,
+            TakeOffJetpack,
+            Event9,
+            Event58,
+            Event56,
+            Event34,
+            Event21,
+            Event0,
         }
         private static Dictionary<Event, uint> EventPriority = new Dictionary<Event, uint>
         {
             { Event.KillCrash, 0 },
-            { Event.LockInput, 1 },
-            { Event.InterruptCrash, 2 },
-            { Event.Event70, 3 },
-            { Event.UnlockInput, 4 },
+            { Event.LandCrash, 1  },
+            { Event.TakeOffJetpack, 1  },
+            { Event.LockInput, 3 },
+            { Event.InterruptCrash, 4 },
+            { Event.Event9, 5 },
+            { Event.Event58, 5 },
+            { Event.Event56, 5 },
+            { Event.Event34, 5 },
+            { Event.Event21, 5 },
+            { Event.Event0, 5  },
+            { Event.UnlockInput, 6 },
             { Event.SyncGlobalValue, 9 },
             { Event.GiveLife, 10 },
             { Event.GiveWumpa, 10 },
@@ -40,7 +54,7 @@ namespace C2AP
 
         private static Timer processEventTimer = new Timer(50);
 
-        private static Random rnd = new Random();
+        //private static Random rnd = new Random();
         public static void Initialize()
         {
             if (BaseHooks.ApItemsHook == null) return;
@@ -135,13 +149,13 @@ namespace C2AP
                             }
                             EnqueueEvent(Event.LockInput);
                             EnqueueEvent(Event.InterruptCrash);
-                            EnqueueEvent(Event.Event70);
+                            EnqueueEvent(Event.Event9);
                             EnqueueEvent(Event.UnlockInput);
                         }
                         else
                         {
                             EnqueueEvent(Event.LockInput);
-                            EnqueueEvent(Event.Event70);
+                            EnqueueEvent(Event.Event9);
                             EnqueueEvent(Event.UnlockInput);
                         }
                     }
@@ -237,6 +251,21 @@ namespace C2AP
                 //    CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 17 << 8, 1, [1 << 8]);
                 //    EnqueueEvent(Event.SyncGlobalValue);
                 //    break;
+                case Event.LandCrash:
+                    //EnqueueEvent(Event.LockInput);
+                    EnqueueEvent(Event.Event56);
+                    //EnqueueEvent(Event.UnlockInput);
+                    break;
+                case Event.TakeOffJetpack:
+                    //EnqueueEvent(Event.Event58);
+                    EnqueueEvent(Event.LockInput);
+                    //EnqueueEvent(Event.Event0);
+                    //EnqueueEvent(Event.Event34);
+                    //EnqueueEvent(Event.Event21);
+                    EnqueueEvent(Event.Event9);
+
+                    EnqueueEvent(Event.UnlockInput);
+                    break;
                 case Event.SyncGlobalValue:
                     Memory.WriteByte(Addresses.LivesGlobalAddress, Memory.ReadByte(crashAddress + Addresses.LivesOffset));
                     Memory.WriteByte(Addresses.WumpaGlobalAddress, Memory.ReadByte(crashAddress + Addresses.WumpaOffset));
@@ -251,8 +280,23 @@ namespace C2AP
                     InputLock.UnlockInput(InputFlag.All);
                     CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 0, 0, []);
                     break;
-                case Event.Event70:
-                    CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 70 << 8, 1, [100 << 8]);
+                case Event.Event9:
+                    CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 9 << 8, 1, [100 << 8]);
+                    break;
+                case Event.Event58:
+                    CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 58 << 8, 1, [100 << 8]);
+                    break;
+                case Event.Event56:
+                    CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 56 << 8, 1, [100 << 8]);
+                    break;
+                case Event.Event34:
+                    CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 34 << 8, 1, [100 << 8]);
+                    break;
+                case Event.Event21:
+                    CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 21 << 8, 1, [100 << 8]);
+                    break;
+                case Event.Event0:
+                    CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 0, 0, []);
                     break;
                 case Event.InterruptCrash:
                     CallSendEvent(0, crashAddress + CrashObject.cacheOffset, 39 << 8, 1, [100 << 8]);
@@ -316,7 +360,7 @@ namespace C2AP
                 "sw $a2, 0xc($sp)",
                 "sw $a3, 0x14($sp)",
 
-                // because of how my hook works, 2 operations are done on $v0 and it needs to be saved because the function call to Send Event will overwrite $v0
+                // the 2 operations done on $v0 (at the target location) need to be saved because the function call to Send Event will overwrite $v0
                 "sw $v0, 0x18($sp)",
 
                 // also save $ra because jal overwrites it
