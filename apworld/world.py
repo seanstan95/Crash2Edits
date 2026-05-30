@@ -43,12 +43,12 @@ def setup_groups():
     }
 
     # the below creates the following:
-    # 1) individual level groups (e.g. Turtle Woods, Totally Bear)
-    # 2) per-warp room groups (e.g. Warp 1 Crystals, Warp 4 Gems, Warp 5 Exits)
-    # 3) full warp room groups (e.g. Warp 1, Warp 2)
-    # 3) miscellaneous: secret exits, bosses, colored gems
+    # 1) individual level groups (e.g. Turtle Woods, Totally Bear) which contain the crystal, all gems, and all exits for each level
+    # 2) per-warp room groups (e.g. Warp 1 Crystals, Warp 4 Gems, Warp 5 Regular Exits). Didn't do per-warp room secret exits since there's only 5 across the whole game
+    # 3) full warp room groups (e.g. Warp 1 (All), Warp 2 (All)) which contain all crystals, gems, and exits for each
+    # 3) miscellaneous: all regular exits, all secret exits, all bosses, all colored gems
     location_name_groups = defaultdict(set)
-    location_name_groups["Bosses"] = {"Ripper Roo Defeated", "Komodo Brothers Defeated", "Tiny Tiger Defeated", "Dr. N. Gin Defeated"}
+    location_name_groups["All Bosses"] = {"Ripper Roo Defeated", "Komodo Brothers Defeated", "Tiny Tiger Defeated", "Dr. N. Gin Defeated"}
 
     for loc in locations.LOCATION_NAME_TO_ID.keys():
         ind = loc.find(":")
@@ -56,19 +56,21 @@ def setup_groups():
             continue
 
         level_name = loc[:ind]  # level names are before the colon
-        warp_num = locations.level_lookup[level_name]  # level_lookup is pre-set up with level names -> warp number
-        location_name_groups[level_name].add(loc)  # per-level groups
-        location_name_groups[f"Warp {warp_num}"].add(loc)  # per-warp room groups
+        warp = locations.level_lookup[level_name]  # level_lookup is pre-set up with level names -> warp
+        location_name_groups[f"{level_name}"].add(loc)  # per-level groups
+        location_name_groups[f"{warp} (All)"].add(loc)  # per-warp room groups
 
         if "Secret Exit" in loc:
-            location_name_groups["Secret Exits"].add(loc)
-        elif "Gem" in loc and "Clear" not in loc:
-            location_name_groups["Colored Gems"].add(loc)
+            location_name_groups["All Secret Exits"].add(loc)
+        if "Gem" in loc and "Clear" not in loc:
+            location_name_groups["All Colored Gems"].add(loc)
+        if "Regular Exit" in loc:
+            location_name_groups["All Regular Exits"].add(loc)
 
         # crystals, gems, and regular exits have same logic. Just check if those words are in the location, ezpz
         for group in ["Crystal", "Gem", "Regular Exit"]:
             if group in loc:
-                location_name_groups[f"Warp {warp_num} {group}s"].add(loc)
+                location_name_groups[f"{warp} {group}s"].add(loc)
 
     return item_name_groups, location_name_groups
 

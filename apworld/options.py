@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from Options import Toggle, DefaultOnToggle, Option, Range, Choice, ItemDict, OptionList, DeathLink, PerGameCommonOptions
-from Options import OptionGroup
+from Options import OptionGroup, OptionSet
 
 
 # In this file, we define the options the player can pick.
@@ -39,16 +39,21 @@ class AddExtraCrystals(Range):
     range_end = 64-25
     default = 0
 
-class SpeedrunLogic(Toggle):
+class SpeedrunLogic(OptionSet):
     """
-    true: Speedrun skips will be in logic (ex. red gem early)
-    false: Casual play logic (ex. logic will assume you need the snow go secret entrance to get the red gem)
-    All the skips considered are:
-    - Red gem early (skipping snow go secret entrance)
-    - Road to Ruin box gem (skipping road to ruin secret entrance)
-    - Ruination green gem path gem (skipping green gem)
+    This option lets you choose to enable any of a few implemented speedrun skips.
+    For any that you enable, you may be required to do it in your seed, depending on how
+    the randomization plays out. List them using the names provided below.
+
+    Supported tricks:
+    red_gem_early: get the red gem in Snow Go without using the secret entrance.
+    road_to_ruin_gem: get the secret entrance gem in Road to Ruin without using the secret entrance.
+    ruination_skip_green: access the green gem path in Ruination without needing the green gem.
     """
     display_name = "Speedrun Logic"
+    valid_keys = ["red_gem_early", "road_to_ruin_gem", "ruination_skip_green"]
+    default = []
+
 
 class WumpaFruitChance(Range):
 

@@ -314,7 +314,7 @@ def create_regular_locations(world: Crash2World) -> None:
         region = world.get_region(name)
         for location in locations:
             if name in location:
-                if not world.options.level_exit_locations and "Exit" in location and "Secret Exit" not in location:
+                if not world.options.level_exit_locations and "Regular Exit" in location:
                     continue
                 if "Bundle" in location:
                     if world.options.fruit_sanity != 1:

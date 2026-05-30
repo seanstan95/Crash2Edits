@@ -146,28 +146,32 @@ def set_all_location_rules(world: Crash2World) -> None:
                 # print("rule: " + location.name + ", needs: " + gem_color + " Gem")
 
 
-    set_rule(world.get_location("Hang Eight Clear Gem (Box Gem)"),
+    set_rule(world.get_location("Hang Eight: Clear Gem (Box Gem)"),
              lambda state: state.has("Blue Gem", world.player))
 
-    set_rule(world.get_location("Snow Biz Clear Gem (Box Gem)"),
+    set_rule(world.get_location("Snow Biz: Clear Gem (Box Gem)"),
              lambda state: state.has("Red Gem", world.player))
 
-    set_rule(world.get_location("Sewer or Later Clear Gem (Yellow Gem Path)"),
+    set_rule(world.get_location("Sewer or Later: Clear Gem (Yellow Gem Path)"),
              lambda state: state.has("Yellow Gem", world.player))
 
-    set_rule(world.get_location("Spaced Out Clear Gem (All Colored Gems Path)"),
+    set_rule(world.get_location("Spaced Out: Clear Gem (All Colored Gems Path)"),
              lambda state: state.has_all(("Blue Gem", "Red Gem", "Green Gem", "Yellow Gem", "Purple Gem"), world.player))
 
-    set_rule(world.get_location("Air Crash Clear Gem (Box Gem)"),
+    set_rule(world.get_location("Air Crash: Clear Gem (Box Gem)"),
              lambda state: state.has("Air Crash Secret Entrance", world.player))
 
-    if not world.options.speedrun_logic: # if casual play logic
-        set_rule(world.get_location("Snow Go Red Gem"),
-                 lambda state: state.has("Snow Go Secret Entrance", world.player))
-        set_rule(world.get_location("Road to Ruin Clear Gem (Box Gem)"),
-                 lambda state: state.has("Road to Ruin Secret Entrance", world.player))
-        set_rule(world.get_location("Ruination Clear Gem (Green Gem Path)"),
-                 lambda state: state.has("Green Gem", world.player))
+    red_gem = True if "red_gem_early" in world.options.speedrun_logic.value else False
+    road_to_ruin = True if "road_to_ruin_gem" in world.options.speedrun_logic.value else False
+    ruination_skip_green = True if "ruination_skip_green" in world.options.speedrun_logic.value else False
+    print(red_gem, road_to_ruin, ruination_skip_green)
+
+    set_rule(world.get_location("Snow Go: Red Gem"),
+             lambda state: state.has("Snow Go Secret Entrance", world.player) or red_gem)
+    set_rule(world.get_location("Road to Ruin: Clear Gem (Box Gem)"),
+             lambda state: state.has("Road to Ruin Secret Entrance", world.player) or road_to_ruin)
+    set_rule(world.get_location("Ruination: Clear Gem (Green Gem Path)"),
+             lambda state: state.has("Green Gem", world.player) or ruination_skip_green)
 
     # if world.options.hard_mode:
     #     # If you have multiple conditions, you can obviously chain them via "or" or "and".
