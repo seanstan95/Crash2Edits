@@ -57,7 +57,7 @@ def setup_groups():
 
         level_name = loc[:ind]  # level names are before the colon
         warp = locations.level_lookup[level_name]  # level_lookup is pre-set up with level names -> warp
-        location_name_groups[f"{level_name}"].add(loc)  # per-level groups
+        location_name_groups[level_name].add(loc)  # per-level groups
         location_name_groups[f"{warp} (All)"].add(loc)  # per-warp room groups
 
         if "Secret Exit" in loc:
