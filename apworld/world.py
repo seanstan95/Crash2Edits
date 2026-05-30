@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+from collections import defaultdict
 from typing import Any
 
 import worlds.tunic.ut_stuff
@@ -32,6 +33,45 @@ class Crash2WebWorld(WebWorld):
     theme = "grass"
 
     option_groups = crash2_options.option_groups
+
+def setup_groups():
+    # item groups hardcoded since there's not many
+    item_name_groups = {
+        "Colored Gems": {"Blue Gem", "Yellow Gem", "Red Gem", "Purple Gem", "Green Gem"},
+        "Filler": {"Life", "Wumpa Fruit"},
+        "Traps": {"Big Crash Trap", "Small Crash Trap", "No Lives Trap", "Jetpack Controls Trap"}
+    }
+
+    # the below creates the following:
+    # 1) individual level groups (e.g. Turtle Woods, Totally Bear)
+    # 2) per-warp room groups (e.g. Warp 1 Crystals, Warp 4 Gems, Warp 5 Exits)
+    # 3) full warp room groups (e.g. Warp 1, Warp 2)
+    # 3) miscellaneous: secret exits, bosses, colored gems
+    location_name_groups = defaultdict(set)
+    location_name_groups["Bosses"] = {"Ripper Roo Defeated", "Komodo Brothers Defeated", "Tiny Tiger Defeated", "Dr. N. Gin Defeated"}
+
+    for loc in locations.LOCATION_NAME_TO_ID.keys():
+        ind = loc.find(":")
+        if ind == -1:  # locations without a : are either bosses (dealt with above) or the polar secret which is ungrouped
+            continue
+
+        level_name = loc[:ind]  # level names are before the colon
+        warp_num = locations.level_lookup[level_name]  # level_lookup is pre-set up with level names -> warp number
+        location_name_groups[level_name].add(loc)  # per-level groups
+        location_name_groups[f"Warp {warp_num}"].add(loc)  # per-warp room groups
+
+        if "Secret Exit" in loc:
+            location_name_groups["Secret Exits"].add(loc)
+        elif "Gem" in loc and "Clear" not in loc:
+            location_name_groups["Colored Gems"].add(loc)
+
+        # crystals, gems, and regular exits have same logic. Just check if those words are in the location, ezpz
+        for group in ["Crystal", "Gem", "Regular Exit"]:
+            if group in loc:
+                location_name_groups[f"Warp {warp_num} {group}s"].add(loc)
+
+    return item_name_groups, location_name_groups
+
 class Crash2World(World):
     """
     Crash Bandicoot 2: Cortex Strikes Back
@@ -55,6 +95,7 @@ class Crash2World(World):
     locations.prepare_fruit_sanity()
     location_name_to_id = locations.LOCATION_NAME_TO_ID
     item_name_to_id = items.ITEM_NAME_TO_ID
+    item_name_groups, location_name_groups = setup_groups()
 
     # warp room level layout
     warp_room: list[int] = randomize_warp.warpRoomLevelIds

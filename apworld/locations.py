@@ -67,152 +67,161 @@ for name in levelNameToId:
 #     "Right Room Enemy Drop": 10,
 # }
 LOCATION_NAME_TO_ID = {
-    "Turtle Woods Crystal": 1,
-    "Turtle Woods Clear Gem (Box Gem)": 2,
-    "Turtle Woods Blue Gem": 3,
+    "Turtle Woods: Crystal": 1,
+    "Turtle Woods: Clear Gem (Box Gem)": 2,
+    "Turtle Woods: Blue Gem": 3,
 
-    "Snow Go Crystal": 4,
-    "Snow Go Clear Gem (Box Gem)": 5,
-    "Snow Go Red Gem": 6,
+    "Snow Go: Crystal": 4,
+    "Snow Go: Clear Gem (Box Gem)": 5,
+    "Snow Go: Red Gem": 6,
 
-    "Hang Eight Crystal": 7,
-    "Hang Eight Clear Gem (Box Gem)": 8,
-    "Hang Eight Clear Gem (Timer)": 9,
+    "Hang Eight: Crystal": 7,
+    "Hang Eight: Clear Gem (Box Gem)": 8,
+    "Hang Eight: Clear Gem (Timer)": 9,
 
-    "The Pits Crystal": 10,
-    "The Pits Clear Gem (Box Gem)": 11,
+    "The Pits: Crystal": 10,
+    "The Pits: Clear Gem (Box Gem)": 11,
 
-    "Crash Dash Crystal": 12,
-    "Crash Dash Clear Gem (Box Gem)": 13,
+    "Crash Dash: Crystal": 12,
+    "Crash Dash: Clear Gem (Box Gem)": 13,
 
     "Ripper Roo Defeated": 14,
 
-    "Snow Biz Crystal": 15,
-    "Snow Biz Clear Gem (Box Gem)": 16,
+    "Snow Biz: Crystal": 15,
+    "Snow Biz: Clear Gem (Box Gem)": 16,
 
-    "Air Crash Crystal": 17,
-    "Air Crash Clear Gem (Box Gem)": 18,
-    "Air Crash Clear Gem (Death Route)": 19,
+    "Air Crash: Crystal": 17,
+    "Air Crash: Clear Gem (Box Gem)": 18,
+    "Air Crash: Clear Gem (Death Route)": 19,
 
-    "Bear It Crystal": 20,
-    "Bear It Clear Gem (Box Gem)": 21,
+    "Bear It: Crystal": 20,
+    "Bear It: Clear Gem (Box Gem)": 21,
 
-    "Crash Crush Crystal": 22,
-    "Crash Crush Clear Gem (Box Gem)": 23,
+    "Crash Crush: Crystal": 22,
+    "Crash Crush: Clear Gem (Box Gem)": 23,
 
-    "The Eel Deal Crystal": 24,
-    "The Eel Deal Clear Gem (Box Gem)": 25,
-    "The Eel Deal Green Gem": 26,
+    "The Eel Deal: Crystal": 24,
+    "The Eel Deal: Clear Gem (Box Gem)": 25,
+    "The Eel Deal: Green Gem": 26,
 
     "Komodo Brothers Defeated": 27,
 
-    "Plant Food Crystal": 28,
-    "Plant Food Clear Gem (Box Gem)": 29,
-    "Plant Food Yellow Gem": 30,
+    "Plant Food: Crystal": 28,
+    "Plant Food: Clear Gem (Box Gem)": 29,
+    "Plant Food: Yellow Gem": 30,
 
-    "Sewer or Later Crystal": 31,
-    "Sewer or Later Clear Gem (Box Gem)": 32,
-    "Sewer or Later Clear Gem (Yellow Gem Path)": 33,
+    "Sewer or Later: Crystal": 31,
+    "Sewer or Later: Clear Gem (Box Gem)": 32,
+    "Sewer or Later: Clear Gem (Yellow Gem Path)": 33,
 
-    "Bear Down Crystal": 34,
-    "Bear Down Clear Gem (Box Gem)": 35,
+    "Bear Down: Crystal": 34,
+    "Bear Down: Clear Gem (Box Gem)": 35,
 
-    "Road to Ruin Crystal": 36,
-    "Road to Ruin Clear Gem (Box Gem)": 37,
-    "Road to Ruin Clear Gem (Death Route)": 38,
+    "Road to Ruin: Crystal": 36,
+    "Road to Ruin: Clear Gem (Box Gem)": 37,
+    "Road to Ruin: Clear Gem (Death Route)": 38,
 
-    "Un-Bearable Crystal": 39,
-    "Un-Bearable Clear Gem (Box Gem)": 40,
+    "Un-Bearable: Crystal": 39,
+    "Un-Bearable: Clear Gem (Box Gem)": 40,
 
     "Tiny Tiger Defeated": 41,
 
-    "Hangin' Out Crystal": 42,
-    "Hangin' Out Clear Gem (Box Gem)": 43,
+    "Hangin' Out: Crystal": 42,
+    "Hangin' Out: Clear Gem (Box Gem)": 43,
 
-    "Diggin' It Crystal": 44,
-    "Diggin' It Clear Gem (Box Gem)": 45,
-    "Diggin' It Clear Gem (Death Route)": 46,
+    "Diggin' It: Crystal": 44,
+    "Diggin' It: Clear Gem (Box Gem)": 45,
+    "Diggin' It: Clear Gem (Death Route)": 46,
 
-    "Cold Hard Crash Crystal": 47,
-    "Cold Hard Crash Clear Gem (Box Gem)": 48,
-    "Cold Hard Crash Clear Gem (Death Route)": 49,
+    "Cold Hard Crash: Crystal": 47,
+    "Cold Hard Crash: Clear Gem (Box Gem)": 48,
+    "Cold Hard Crash: Clear Gem (Death Route)": 49,
 
-    "Ruination Crystal": 50,
-    "Ruination Clear Gem (Box Gem)": 51,
-    "Ruination Clear Gem (Green Gem Path)": 52,
+    "Ruination: Crystal": 50,
+    "Ruination: Clear Gem (Box Gem)": 51,
+    "Ruination: Clear Gem (Green Gem Path)": 52,
 
-    "Bee-Having Crystal": 53,
-    "Bee-Having Clear Gem (Box Gem)": 54,
-    "Bee-Having Purple Gem": 55,
+    "Bee-Having: Crystal": 53,
+    "Bee-Having: Clear Gem (Box Gem)": 54,
+    "Bee-Having: Purple Gem": 55,
 
     "Dr. N. Gin Defeated": 56,
 
-    "Piston it Away Crystal": 57,
-    "Piston it Away Clear Gem (Box Gem)": 58,
-    "Piston it Away Clear Gem (Death Route)": 59,
+    "Piston it Away: Crystal": 57,
+    "Piston it Away: Clear Gem (Box Gem)": 58,
+    "Piston it Away: Clear Gem (Death Route)": 59,
 
-    "Rock It Crystal": 60,
-    "Rock It Clear Gem (Box Gem)": 61,
+    "Rock It: Crystal": 60,
+    "Rock It: Clear Gem (Box Gem)": 61,
 
-    "Night Fight Crystal": 62,
-    "Night Fight Clear Gem (Box Gem)": 63,
-    "Night Fight Clear Gem (Death Route)": 64,
+    "Night Fight: Crystal": 62,
+    "Night Fight: Clear Gem (Box Gem)": 63,
+    "Night Fight: Clear Gem (Death Route)": 64,
 
-    "Pack Attack Crystal": 65,
-    "Pack Attack Clear Gem (Box Gem)": 66,
+    "Pack Attack: Crystal": 65,
+    "Pack Attack: Clear Gem (Box Gem)": 66,
 
-    "Spaced Out Crystal": 67,
-    "Spaced Out Clear Gem (Box Gem)": 68,
-    "Spaced Out Clear Gem (All Colored Gems Path)": 69,
+    "Spaced Out: Crystal": 67,
+    "Spaced Out: Clear Gem (Box Gem)": 68,
+    "Spaced Out: Clear Gem (All Colored Gems Path)": 69,
 
     #"Dr. Neo Cortex Defeated": 70,
 
-    "Totally Bear Clear Gem (Box Gem)": 71,
-    "Totally Fly Clear Gem (Box Gem)": 72,
+    "Totally Bear: Clear Gem (Box Gem)": 71,
+    "Totally Fly: Clear Gem (Box Gem)": 72,
 
-    "Turtle Woods Exit": 73,
-    "Snow Go Exit": 74,
-    "Hang Eight Exit": 75,
-    "The Pits Exit": 76,
-    "Crash Dash Exit": 77,
-    "Snow Biz Exit": 79,
-    "Air Crash Exit": 80,
-    "Bear It Exit": 81,
-    "Crash Crush Exit": 82,
-    "The Eel Deal Exit": 83,
-    "Plant Food Exit": 85,
-    "Sewer or Later Exit": 86,
-    "Bear Down Exit": 87,
-    "Road to Ruin Exit": 88,
-    "Un-Bearable Exit": 89,
-    "Hangin' Out Exit": 91,
-    "Diggin' It Exit": 92,
-    "Cold Hard Crash Exit": 93,
-    "Ruination Exit": 94,
-    "Bee-Having Exit": 95,
-    "Piston it Away Exit": 97,
-    "Rock It Exit": 98,
-    "Night Fight Exit": 99,
-    "Pack Attack Exit": 100,
-    "Spaced Out Exit": 101,
-    "Totally Bear Exit": 102,
-    "Totally Fly Exit": 103,
+    "Turtle Woods: Regular Exit": 73,
+    "Snow Go: Regular Exit": 74,
+    "Hang Eight: Regular Exit": 75,
+    "The Pits: Regular Exit": 76,
+    "Crash Dash: Regular Exit": 77,
+    "Snow Biz: Regular Exit": 79,
+    "Air Crash: Regular Exit": 80,
+    "Bear It: Regular Exit": 81,
+    "Crash Crush: Regular Exit": 82,
+    "The Eel Deal: Regular Exit": 83,
+    "Plant Food: Regular Exit": 85,
+    "Sewer or Later: Regular Exit": 86,
+    "Bear Down: Regular Exit": 87,
+    "Road to Ruin: Regular Exit": 88,
+    "Un-Bearable: Regular Exit": 89,
+    "Hangin' Out: Regular Exit": 91,
+    "Diggin' It: Regular Exit": 92,
+    "Cold Hard Crash: Regular Exit": 93,
+    "Ruination: Regular Exit": 94,
+    "Bee-Having: Regular Exit": 95,
+    "Piston it Away: Regular Exit": 97,
+    "Rock It: Regular Exit": 98,
+    "Night Fight: Regular Exit": 99,
+    "Pack Attack: Regular Exit": 100,
+    "Spaced Out: Regular Exit": 101,
+    "Totally Bear: Regular Exit": 102,
+    "Totally Fly: Regular Exit": 103,
 
     # Secret exits
-    "Air Crash Secret Exit": 104,
-    "Hangin' Out Secret Exit": 105,
-    "Diggin' It Secret Exit": 106,
-    "Un-Bearable Secret Exit": 107,
-    "Bear Down Secret Exit": 108,
+    "Air Crash: Secret Exit": 104,
+    "Hangin' Out: Secret Exit": 105,
+    "Diggin' It: Secret Exit": 106,
+    "Un-Bearable: Secret Exit": 107,
+    "Bear Down: Secret Exit": 108,
 
     # Extra
 
     "Polar Lives Secret": 109,
 
-    "Test Location 0": 10000,
-    "Test Location 1": 20000,
+    # "Test Location 0": 10000,
+    # "Test Location 1": 20000,
     # "Test Location 2": 10002,
 }
+
+# for easier lookup during location group setup
+warp_1 = dict.fromkeys(["Turtle Woods", "Snow Go", "Hang Eight", "The Pits", "Crash Dash"], "Warp 1")
+warp_2 = dict.fromkeys(["Snow Biz", "Air Crash", "Bear It", "Crash Crush", "The Eel Deal"], "Warp 2")
+warp_3 = dict.fromkeys(["Plant Food", "Sewer or Later", "Bear Down", "Road to Ruin", "Un-Bearable"], "Warp 3")
+warp_4 = dict.fromkeys(["Hangin' Out", "Diggin' It", "Cold Hard Crash", "Ruination", "Bee-Having"], "Warp 4")
+warp_5 = dict.fromkeys(["Piston it Away", "Rock It", "Night Fight", "Pack Attack", "Spaced Out"], "Warp 5")
+warp_6 = dict.fromkeys(["Totally Bear", "Totally Fly"], "Warp 6")
+level_lookup = {**warp_1, **warp_2, **warp_3, **warp_4, **warp_5, **warp_6}
 
 # Fruit_Sanity_Data = {}
 
