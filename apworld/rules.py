@@ -164,7 +164,6 @@ def set_all_location_rules(world: Crash2World) -> None:
     red_gem = True if "red_gem_early" in world.options.speedrun_logic.value else False
     road_to_ruin = True if "road_to_ruin_gem" in world.options.speedrun_logic.value else False
     ruination_skip_green = True if "ruination_skip_green" in world.options.speedrun_logic.value else False
-    print(red_gem, road_to_ruin, ruination_skip_green)
 
     set_rule(world.get_location("Snow Go: Red Gem"),
              lambda state: state.has("Snow Go Secret Entrance", world.player) or red_gem)
