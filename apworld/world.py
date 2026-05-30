@@ -60,12 +60,13 @@ def setup_groups():
         location_name_groups[level_name].add(loc)  # per-level groups
         location_name_groups[f"{warp} (All)"].add(loc)  # per-warp room groups
 
-        if "Secret Exit" in loc:
-            location_name_groups["All Secret Exits"].add(loc)
-        if "Gem" in loc and "Clear" not in loc:
+        if "Gem" in loc and "Clear" not in loc:  # didn't feel particularly justified to rename these locations to make this easier
             location_name_groups["All Colored Gems"].add(loc)
-        if "Regular Exit" in loc:
-            location_name_groups["All Regular Exits"].add(loc)
+
+        # All <type> groups
+        for group in ["Crystal", "Clear Gem", "Secret Exit", "Regular Exit"]:
+            if group in loc:
+                location_name_groups[f"All {group}s"].add(loc)
 
         # crystals, gems, and regular exits have same logic. Just check if those words are in the location, ezpz
         for group in ["Crystal", "Gem", "Regular Exit"]:
